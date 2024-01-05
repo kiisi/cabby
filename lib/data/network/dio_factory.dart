@@ -1,9 +1,7 @@
-import 'dart:convert';
-
-import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/app/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 const String applicationJson = "application/json";
@@ -13,9 +11,7 @@ const String authorization = "authorization";
 const String defaultLanguage = "language";
 
 class DioFactory {
-  final AppPreferences _appPreferences;
-
-  DioFactory(this._appPreferences);
+  DioFactory();
 
   Future<Dio> getDio() async {
     Dio dio = Dio();
@@ -29,7 +25,7 @@ class DioFactory {
       defaultLanguage: language
     };
 
-    dio.interceptors.add(JsonResponseInterceptor());
+    // dio.interceptors.add(NetworkConnectivityInterceptor());
 
     dio.options = BaseOptions(
         baseUrl: Constant.baseUrl,
@@ -47,10 +43,21 @@ class DioFactory {
   }
 }
 
-class JsonResponseInterceptor extends Interceptor {
+class NetworkConnectivityInterceptor extends Interceptor {
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    response.data = json.decode(response.data);
-    super.onResponse(response, handler);
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    super.onRequest(options, handler);
+
+    if (await InternetConnectionChecker().hasConnection) {
+      handler.next(options);
+    } else {
+      throw DioException(
+        requestOptions: options,
+        type: DioExceptionType.connectionError,
+        error: "Error: No internet connection",
+        message: "No internet connection",
+      );
+    }
   }
 }
