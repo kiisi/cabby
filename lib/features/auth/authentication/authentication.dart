@@ -225,8 +225,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         if (state.formStatus is FormSubmissionSuccess) {
           FormSubmissionSuccess successData =
               (state.formStatus as FormSubmissionSuccess);
-          var data = successData.message;
-          CustomSnackbar.showSuccessSnackBar(context: context, message: data!);
+          CustomSnackbar.showSuccessSnackBar(
+              context: context, message: successData.message!);
           context.router.push(OtpVerificationRoute(
             phoneNumber: state.phoneNumber,
             countryCode: state.countryCode,

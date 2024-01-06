@@ -16,8 +16,6 @@ class OtpVerificationBloc
       {required this.phoneNumber, required this.countryCode})
       : super(OtpVerificationState()) {
     on<OtpVerificationEvent>((event, emit) async {
-      print(countryCode);
-      print(phoneNumber);
       if (event is OtpVerificationSetOtp) {
         emit(state.copyWith(
           otp: event.otp,
@@ -35,8 +33,14 @@ class OtpVerificationBloc
         ))
             .fold(
           (failure) => {
-            print("Failure $failure"),
-            emit(state.copyWith(formStatus: FormSubmissionFailed()))
+            print("Failure ${failure.message}"),
+            emit(
+              state.copyWith(
+                formStatus: FormSubmissionFailed(
+                  message: failure.message,
+                ),
+              ),
+            ),
           },
           (success) => {
             print('Success $success'),

@@ -190,6 +190,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           CustomSnackbar.showSuccessSnackBar(
               context: context, message: successData.message!);
           context.router.replaceAll([const WelcomeUserRoute()]);
+        } else if (state.formStatus is FormSubmissionFailed) {
+          print("formsubmission failed");
+          FormSubmissionFailed errorData =
+              (state.formStatus as FormSubmissionFailed);
+          print(errorData);
+          CustomSnackbar.showErrorSnackBar(
+              context: context, message: errorData.message!);
         }
       },
       builder: (context, state) {

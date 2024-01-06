@@ -25,7 +25,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
           await _authenticationRemoteDataSource.getStarted(getStartedRequest);
       return Right(response);
     } catch (error) {
-      return Left(Failure());
+      return Left(FailureExceptionHandler.handle(error).failure);
     }
   }
 
@@ -38,7 +38,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       return Right(response);
     } catch (error) {
       print('optVerif Impl Error: $error');
-      return Left(Failure());
+      return Left(FailureExceptionHandler.handle(error).failure);
     }
   }
 }
