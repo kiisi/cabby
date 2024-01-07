@@ -10,6 +10,9 @@ abstract interface class AuthenticationRepository {
 
   Future<Either<Failure, AuthenticationResponse>> otpVerify(
       OtpVerifyRequest otpVerifyRequest);
+
+  Future<Either<Failure, AuthenticationResponse>> getStartedUserInfo(
+      GetStartedUserInfoRequest getStartedUserInfoRequest);
 }
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
@@ -37,7 +40,18 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
           .otpVerifyRequest(otpVerifyRequest);
       return Right(response);
     } catch (error) {
-      print('optVerif Impl Error: $error');
+      return Left(FailureExceptionHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthenticationResponse>> getStartedUserInfo(
+      GetStartedUserInfoRequest getStartedUserInfoRequest) async {
+    try {
+      final response = await _authenticationRemoteDataSource
+          .getStartedUserInfo(getStartedUserInfoRequest);
+      return Right(response);
+    } catch (error) {
       return Left(FailureExceptionHandler.handle(error).failure);
     }
   }

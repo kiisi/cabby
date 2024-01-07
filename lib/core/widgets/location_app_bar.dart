@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 
-class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
+class LocationAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final BuildContext context;
   final bool enableLocationAppbar;
-  final Widget? mainAppBar;
-  const CustomAppbar(
-      {super.key, this.enableLocationAppbar = false, this.mainAppBar});
+  const LocationAppBar(
+      {super.key, this.enableLocationAppbar = false, required this.context});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        children: [
-          if (enableLocationAppbar)
-            Container(
-              height: 56 + MediaQuery.of(context).padding.top,
+    return Container(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      color: enableLocationAppbar ? const Color(0xFFfe9900) : Colors.blue,
+      child: enableLocationAppbar
+          ? Container(
+              height: 50,
               color: const Color(0xFFfe9900),
               width: double.infinity,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 5,
-                bottom: 10,
+              padding: const EdgeInsets.only(
+                top: 5,
+                bottom: 5,
                 left: 12,
                 right: 12,
               ),
@@ -45,14 +45,12 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ],
               ),
-            ),
-          if (mainAppBar != null) mainAppBar!,
-        ],
-      ),
+            )
+          : null,
     );
   }
 
   @override
-  // TODO: implement preferredSize
-  Size get preferredSize => const Size(double.infinity, 56);
+  Size get preferredSize =>
+      Size(double.infinity, enableLocationAppbar ? 50 : 0);
 }

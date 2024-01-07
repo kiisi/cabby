@@ -30,3 +30,16 @@ class OtpVerifyUseCase
     return await _authenticationRepository.otpVerify(input);
   }
 }
+
+class GetStartedUserInfoUseCase
+    implements BaseUseCase<GetStartedUserInfoRequest, AuthenticationResponse> {
+  final AuthenticationRepository _authenticationRepository;
+
+  GetStartedUserInfoUseCase(this._authenticationRepository);
+
+  @override
+  Future<Either<Failure, AuthenticationResponse>> execute(
+      GetStartedUserInfoRequest input) async {
+    return await _authenticationRepository.getStartedUserInfo(input);
+  }
+}

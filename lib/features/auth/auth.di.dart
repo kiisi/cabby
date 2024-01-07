@@ -22,4 +22,7 @@ void authDependencyInjection() {
 
   getIt
       .registerLazySingleton<OtpVerifyUseCase>(() => OtpVerifyUseCase(getIt()));
+
+  getIt.registerLazySingleton<GetStartedUserInfoUseCase>(
+      () => GetStartedUserInfoUseCase(getIt()));
 }

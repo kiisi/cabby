@@ -12,9 +12,9 @@ import 'package:auto_route/auto_route.dart' as _i6;
 import 'package:cabby/features/auth/authentication/authentication.dart' as _i1;
 import 'package:cabby/features/auth/otp-verification/otp_verification.dart'
     as _i4;
+import 'package:cabby/features/auth/welcome-user/welcome_user.dart' as _i5;
 import 'package:cabby/features/home/home.dart' as _i2;
 import 'package:cabby/features/onboarding/onboarding.dart' as _i3;
-import 'package:cabby/features/welcome-user/welcome_user.dart' as _i5;
 import 'package:flutter/material.dart' as _i7;
 
 abstract class $AppRouter extends _i6.RootStackRouter {
@@ -53,9 +53,15 @@ abstract class $AppRouter extends _i6.RootStackRouter {
       );
     },
     WelcomeUserRoute.name: (routeData) {
+      final args = routeData.argsAs<WelcomeUserRouteArgs>(
+          orElse: () => const WelcomeUserRouteArgs());
       return _i6.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i5.WelcomeUserScreen(),
+        child: _i5.WelcomeUserScreen(
+          key: args.key,
+          countryCode: args.countryCode,
+          phoneNumber: args.phoneNumber,
+        ),
       );
     },
   };
@@ -148,14 +154,43 @@ class OtpVerificationRouteArgs {
 
 /// generated route for
 /// [_i5.WelcomeUserScreen]
-class WelcomeUserRoute extends _i6.PageRouteInfo<void> {
-  const WelcomeUserRoute({List<_i6.PageRouteInfo>? children})
-      : super(
+class WelcomeUserRoute extends _i6.PageRouteInfo<WelcomeUserRouteArgs> {
+  WelcomeUserRoute({
+    _i7.Key? key,
+    String? countryCode,
+    String? phoneNumber,
+    List<_i6.PageRouteInfo>? children,
+  }) : super(
           WelcomeUserRoute.name,
+          args: WelcomeUserRouteArgs(
+            key: key,
+            countryCode: countryCode,
+            phoneNumber: phoneNumber,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'WelcomeUserRoute';
 
-  static const _i6.PageInfo<void> page = _i6.PageInfo<void>(name);
+  static const _i6.PageInfo<WelcomeUserRouteArgs> page =
+      _i6.PageInfo<WelcomeUserRouteArgs>(name);
+}
+
+class WelcomeUserRouteArgs {
+  const WelcomeUserRouteArgs({
+    this.key,
+    this.countryCode,
+    this.phoneNumber,
+  });
+
+  final _i7.Key? key;
+
+  final String? countryCode;
+
+  final String? phoneNumber;
+
+  @override
+  String toString() {
+    return 'WelcomeUserRouteArgs{key: $key, countryCode: $countryCode, phoneNumber: $phoneNumber}';
+  }
 }

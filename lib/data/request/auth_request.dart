@@ -19,3 +19,19 @@ class OtpVerifyRequest {
     required this.otp,
   });
 }
+
+class GetStartedUserInfoRequest {
+  final String phoneNumber;
+  final String countryCode;
+  final String firstName;
+  final String lastName;
+  final String gender;
+
+  GetStartedUserInfoRequest({
+    required this.phoneNumber,
+    required this.countryCode,
+    required this.firstName,
+    required this.lastName,
+    required this.gender,
+  });
+}

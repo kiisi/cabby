@@ -1,16 +1,22 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cabby/app/di.dart';
+import 'package:cabby/core/common/custom_snackbar.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
 import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/core/widgets/button.dart';
-import 'package:cabby/features/welcome-user/bloc/welcome_user_bloc.dart';
+import 'package:cabby/data/responses/responses.dart';
+import 'package:cabby/domain/usecases/auth_usecase.dart';
+import 'package:cabby/features/auth/welcome-user/bloc/welcome_user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class WelcomeUserScreen extends StatefulWidget {
-  const WelcomeUserScreen({super.key});
+  final String? phoneNumber;
+  final String? countryCode;
+  const WelcomeUserScreen({super.key, this.countryCode, this.phoneNumber});
 
   @override
   State<WelcomeUserScreen> createState() => _WelcomeUserScreenState();
@@ -22,7 +28,11 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => WelcomeUserBloc(),
+      create: (context) => WelcomeUserBloc(
+        getIt<GetStartedUserInfoUseCase>(),
+        countryCode: widget.countryCode ?? '',
+        phoneNumber: widget.phoneNumber ?? '',
+      ),
       child: Scaffold(
         backgroundColor: ColorManager.black,
         body: SafeArea(
@@ -227,7 +237,16 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
     return BlocConsumer<WelcomeUserBloc, WelcomeUserState>(
       listener: (context, state) {
         if (state.formStatus is FormSubmissionSuccess) {
+          FormSubmissionSuccess<DataResponse> successData =
+              (state.formStatus as FormSubmissionSuccess<DataResponse>);
+          CustomSnackbar.showSuccessSnackBar(
+              context: context, message: successData.message!);
           context.router.replaceNamed('/home');
+        } else if (state.formStatus is FormSubmissionFailed) {
+          FormSubmissionFailed errorData =
+              (state.formStatus as FormSubmissionFailed);
+          CustomSnackbar.showErrorSnackBar(
+              context: context, message: errorData.message!);
         }
       },
       builder: (context, state) {

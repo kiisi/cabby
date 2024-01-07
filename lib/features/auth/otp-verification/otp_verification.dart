@@ -28,7 +28,7 @@ class OtpVerificationScreen extends StatefulWidget {
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   String signature = "{{ app signature }}";
 
-  AppPreferences _appPreferences = getIt<AppPreferences>();
+  final AppPreferences _appPreferences = getIt<AppPreferences>();
 
   @override
   void initState() {
@@ -189,12 +189,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           _appPreferences.setAccessToken(successData.data?.token);
           CustomSnackbar.showSuccessSnackBar(
               context: context, message: successData.message!);
-          context.router.replaceAll([const WelcomeUserRoute()]);
+          context.router.replaceAll([
+            WelcomeUserRoute(
+              phoneNumber: state.phoneNumber,
+              countryCode: state.countryCode,
+            )
+          ]);
         } else if (state.formStatus is FormSubmissionFailed) {
-          print("formsubmission failed");
           FormSubmissionFailed errorData =
               (state.formStatus as FormSubmissionFailed);
-          print(errorData);
           CustomSnackbar.showErrorSnackBar(
               context: context, message: errorData.message!);
         }

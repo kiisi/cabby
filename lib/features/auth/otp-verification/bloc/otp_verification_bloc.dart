@@ -22,7 +22,11 @@ class OtpVerificationBloc
           formStatus: const FormInitialStatus(),
         ));
       } else if (event is OtpVerificationSubmission) {
-        emit(state.copyWith(formStatus: FormSubmitting()));
+        emit(state.copyWith(
+          countryCode: countryCode,
+          phoneNumber: phoneNumber,
+          formStatus: FormSubmitting(),
+        ));
 
         (await _otpVerifyUseCase.execute(
           OtpVerifyRequest(
@@ -32,18 +36,18 @@ class OtpVerificationBloc
           ),
         ))
             .fold(
-          (failure) => {
-            print("Failure ${failure.message}"),
+          (failure) {
+            print("Failure ${failure.message}");
             emit(
               state.copyWith(
                 formStatus: FormSubmissionFailed(
                   message: failure.message,
                 ),
               ),
-            ),
+            );
           },
-          (success) => {
-            print('Success $success'),
+          (success) {
+            print('Success $success');
             emit(
               state.copyWith(
                 formStatus: FormSubmissionSuccess(
@@ -51,7 +55,7 @@ class OtpVerificationBloc
                   data: success.data,
                 ),
               ),
-            ),
+            );
           },
         );
       }

@@ -25,11 +25,8 @@ class CustomSnackbar {
             vertical: 10,
           ),
       backgroundColor: Colors.red,
-      action: SnackBarAction(
-        label: 'dismiss',
-        textColor: Colors.white,
-        onPressed: () => hideSnackBar(context),
-      ),
+      showCloseIcon: true,
+      closeIconColor: ColorManager.white,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -77,11 +74,8 @@ class CustomSnackbar {
       duration: duration,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       backgroundColor: Colors.grey.shade800,
-      action: SnackBarAction(
-        label: 'dismiss',
-        textColor: ColorManager.white,
-        onPressed: () => hideSnackBar(context),
-      ),
+      showCloseIcon: true,
+      closeIconColor: ColorManager.white,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
