@@ -22,12 +22,12 @@ class Button extends ElevatedButton {
           onLongPress: onLongPress,
           style: ElevatedButton.styleFrom(
             fixedSize: const Size.fromHeight(AppSize.s54),
-            disabledBackgroundColor: ColorManager.blue,
+            disabledBackgroundColor: Colors.blue,
             disabledForegroundColor: ColorManager.whiteSmoke,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSize.s10),
             ),
-            backgroundColor: ColorManager.blue,
+            backgroundColor: Colors.blue,
             foregroundColor: ColorManager.white,
           ),
           focusNode: focusNode,

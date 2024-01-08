@@ -13,8 +13,8 @@ import 'package:cabby/features/auth/authentication/authentication.dart' as _i1;
 import 'package:cabby/features/auth/otp-verification/otp_verification.dart'
     as _i4;
 import 'package:cabby/features/auth/welcome-user/welcome_user.dart' as _i5;
-import 'package:cabby/features/home/home.dart' as _i2;
 import 'package:cabby/features/onboarding/onboarding.dart' as _i3;
+import 'package:cabby/features/passenger/home.dart' as _i2;
 import 'package:flutter/material.dart' as _i7;
 
 abstract class $AppRouter extends _i6.RootStackRouter {

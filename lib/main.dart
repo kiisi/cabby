@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:cabby/app/di.dart';
-import 'package:cabby/core/resources/color_manager.dart';
-import 'package:cabby/core/resources/values_manager.dart';
+import 'package:cabby/core/resources/theme_manager.dart';
 import 'package:cabby/core/routes/app_router.dart';
+import 'package:cabby/core/services/location_service.dart';
+import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -24,46 +28,88 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final _appRouter = AppRouter();
+  final LocationService _locationService = LocationService();
+  final LocationServiceBloc _locationServiceBloc = getIt<LocationServiceBloc>();
+  late StreamSubscription<Position> _locationStreamSubscription;
+
+  final LocationSettings _locationSettings = const LocationSettings(
+    accuracy: LocationAccuracy.high,
+    distanceFilter: 100,
+  );
+
+  @override
+  void initState() {
+    _bind();
+    super.initState();
+  }
+
+  _bind() async {
+    // Working Perfectly
+    try {
+      Position position = await _locationService.determinePosition();
+      print("=======Location Success==========");
+      print(position.latitude);
+      print(position.longitude);
+      _locationServiceBloc.add(LocationServiceEnabled());
+    } catch (error) {
+      print("========Location Error==========");
+      _locationServiceBloc.add(LocationServiceDisabled());
+      print(error);
+    }
+
+    Geolocator.getPositionStream(
+      locationSettings: _locationSettings,
+    ).listen((Position position) {
+      print("=============Success==============");
+      print(
+          '${position.latitude.toString()}, ${position.longitude.toString()}');
+      _locationServiceBloc.add(LocationServiceEnabled());
+    }).onError((error) {
+      print("=============Error==============");
+      print(error);
+      _locationServiceBloc.add(LocationServiceDisabled());
+    });
+
+    // Geolocator.getPositionStream(
+    //   locationSettings: _locationSettings,
+    // )
+    //     .asyncExpand((Position? position) async* {
+    //       try {
+    //         _locationServiceBloc.add(LocationServiceEnabled());
+    //         print(position == null
+    //             ? 'Unknown'
+    //             : '${position.latitude.toString()}, ${position.longitude.toString()}');
+    //       } catch (error) {
+    //         print("=============Error==============");
+    //         print(error);
+    //         _locationServiceBloc.add(LocationServiceDisabled());
+    //       }
+    //     })
+    //     .listen((_) {}) // Listen to ensure the stream is active
+    //     .onError((error) {
+    //       // Handle errors if any occur during asyncExpand
+    //       print("Error during asyncExpand: $error");
+    //     });
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: _appRouter.config(),
-      theme: ThemeData(
-        fontFamily: GoogleFonts.poppins().fontFamily,
-        primaryColor: ColorManager.primary,
-        colorScheme: ColorScheme.light(
-            primary: ColorManager.primary, secondary: ColorManager.white),
-        inputDecorationTheme: InputDecorationTheme(
-            focusColor: ColorManager.blueDark,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.blueDark),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.blueDark),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.error),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.error),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
-            errorStyle: const TextStyle(fontSize: AppSize.s14)),
-        buttonTheme: ButtonThemeData(
-          disabledColor: ColorManager.primaryOpacity70,
-          buttonColor: ColorManager.primary,
-          // splashColor: ColorManager.primaryOpacity70,
-        ),
+    return BlocProvider(
+      create: (context) => getIt<LocationServiceBloc>(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: _appRouter.config(),
+        theme: getApplicationTheme(),
       ),
     );
   }

@@ -35,9 +35,11 @@ class AuthenticationBloc
           ),
         ))
             .fold(
-          (failure) => {
-            print("Failure $failure"),
-            emit(state.copyWith(formStatus: FormSubmissionFailed()))
+          (failure) {
+            print("====Failure Error =====");
+            print("Failure $failure");
+            emit(state.copyWith(
+                formStatus: FormSubmissionFailed(message: failure.message)));
           },
           (success) => {
             print('Success $success'),

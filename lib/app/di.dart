@@ -2,6 +2,7 @@ import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/data/network/app_api.dart';
 import 'package:cabby/data/network/dio_factory.dart';
 import 'package:cabby/features/auth/auth.di.dart';
+import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +23,8 @@ Future<void> initAppModule() async {
 
   // Register AppPreferences as a singleton
   getIt.registerLazySingleton<AppPreferences>(() => AppPreferences(getIt()));
+
+  getIt.registerLazySingleton<LocationServiceBloc>(() => LocationServiceBloc());
 
   authDependencyInjection();
 }
