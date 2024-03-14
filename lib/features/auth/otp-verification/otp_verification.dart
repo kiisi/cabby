@@ -189,12 +189,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           _appPreferences.setAccessToken(successData.data?.token);
           CustomSnackbar.showSuccessSnackBar(
               context: context, message: successData.message!);
-          context.router.replaceAll([
-            WelcomeUserRoute(
-              phoneNumber: state.phoneNumber,
-              countryCode: state.countryCode,
-            )
-          ]);
+          if (successData.data?.user?.isProfileComplete == true) {
+            context.router.replaceAll([HomeRoute()]);
+          } else {
+            context.router.replaceAll([
+              WelcomeUserRoute(
+                phoneNumber: state.phoneNumber,
+                countryCode: state.countryCode,
+              )
+            ]);
+          }
         } else if (state.formStatus is FormSubmissionFailed) {
           FormSubmissionFailed errorData =
               (state.formStatus as FormSubmissionFailed);

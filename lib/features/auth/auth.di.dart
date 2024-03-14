@@ -5,8 +5,7 @@ import 'package:cabby/domain/usecases/auth_usecase.dart';
 import 'package:cabby/features/auth/authentication/bloc/authentication_bloc.dart';
 
 void authDependencyInjection() {
-  getIt.registerLazySingleton<AuthenticationBloc>(
-      () => AuthenticationBloc(getIt()));
+  getIt.registerLazySingleton<AuthenticationBloc>(() => AuthenticationBloc());
 
   getIt.registerLazySingleton<GetStartedUseCase>(
       () => GetStartedUseCase(getIt()));
@@ -17,12 +16,11 @@ void authDependencyInjection() {
   getIt.registerLazySingleton<AuthenticationRemoteDataSource>(
       () => AuthenticationRemoteDataSourceImpl(getIt()));
 
-  // getIt.registerLazySingleton<OtpVerificationBloc>(
-  //     () => OtpVerificationBloc(getIt(), ));
-
   getIt
       .registerLazySingleton<OtpVerifyUseCase>(() => OtpVerifyUseCase(getIt()));
 
   getIt.registerLazySingleton<GetStartedUserInfoUseCase>(
       () => GetStartedUserInfoUseCase(getIt()));
+
+  getIt.registerLazySingleton<UserAuthUseCase>(() => UserAuthUseCase(getIt()));
 }

@@ -1,8 +1,12 @@
 import 'package:cabby/app/app_prefs.dart';
+import 'package:cabby/data/data_source/google_maps_remote_data_source.dart';
 import 'package:cabby/data/network/app_api.dart';
 import 'package:cabby/data/network/dio_factory.dart';
+import 'package:cabby/data/repository/google_maps_repository.dart';
+import 'package:cabby/domain/usecases/google_maps_usecase.dart';
 import 'package:cabby/features/auth/auth.di.dart';
 import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
+import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_locations_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,20 +15,42 @@ final getIt = GetIt.instance;
 Future<void> initAppModule() async {
   final sharedPrefs = await SharedPreferences.getInstance();
 
-  // dio factory
-  getIt.registerLazySingleton<DioFactory>(() => DioFactory());
-
-  // app service client
-  final dio = await getIt<DioFactory>().getDio();
-  getIt.registerLazySingleton<AppServiceClient>(() => AppServiceClient(dio));
-
   // SharedPreferences instance
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPrefs);
 
   // Register AppPreferences as a singleton
   getIt.registerLazySingleton<AppPreferences>(() => AppPreferences(getIt()));
 
+  // dio factory
+  getIt.registerLazySingleton<DioFactory>(() => DioFactory(getIt()));
+
+  // app service client
+  final dio = await getIt<DioFactory>().getDio();
+  getIt.registerLazySingleton<AppServiceClient>(() => AppServiceClient(dio));
+
   getIt.registerLazySingleton<LocationServiceBloc>(() => LocationServiceBloc());
 
+  // auth dependency injection
   authDependencyInjection();
+
+  getIt.registerLazySingleton<GoogleMapsServiceClient>(
+      () => GoogleMapsServiceClient(dio));
+
+  getIt.registerLazySingleton<ReverseGeoCodeUseCase>(
+      () => ReverseGeoCodeUseCase(getIt()));
+
+  getIt.registerLazySingleton<AutoCompleteSearchUseCase>(
+      () => AutoCompleteSearchUseCase(getIt()));
+
+  getIt.registerLazySingleton<PlaceDirectionDetailsUseCase>(
+      () => PlaceDirectionDetailsUseCase(getIt()));
+
+  getIt.registerLazySingleton<PassengerLocationsBloc>(
+      () => PassengerLocationsBloc());
+
+  getIt.registerLazySingleton<GoogleMapsRemoteDataSource>(
+      () => GoogleMapsRemoteDataSourceImpl(getIt()));
+
+  getIt.registerLazySingleton<GoogleMapsRepository>(
+      () => GoogleMapsRepositoryImpl(getIt()));
 }

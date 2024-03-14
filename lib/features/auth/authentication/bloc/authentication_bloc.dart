@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cabby/app/di.dart';
 import 'package:cabby/data/request/auth_request.dart';
 import 'package:cabby/domain/usecases/auth_usecase.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
@@ -9,9 +10,9 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final GetStartedUseCase _getStartedUseCase;
+  final GetStartedUseCase _getStartedUseCase = getIt<GetStartedUseCase>();
 
-  AuthenticationBloc(this._getStartedUseCase) : super(AuthenticationState()) {
+  AuthenticationBloc() : super(AuthenticationState()) {
     on<AuthenticationEvent>((event, emit) async {
       if (event is AuthenticationSetPhoneNumber) {
         emit(state.copyWith(
@@ -38,6 +39,7 @@ class AuthenticationBloc
           (failure) {
             print("====Failure Error =====");
             print("Failure $failure");
+            print("Failure Message ${failure.message}");
             emit(state.copyWith(
                 formStatus: FormSubmissionFailed(message: failure.message)));
           },

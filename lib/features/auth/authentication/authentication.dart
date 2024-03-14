@@ -231,6 +231,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             phoneNumber: state.phoneNumber,
             countryCode: state.countryCode,
           ));
+        } else if (state.formStatus is FormSubmissionFailed) {
+          FormSubmissionFailed errorData =
+              (state.formStatus as FormSubmissionFailed);
+          CustomSnackbar.showErrorSnackBar(
+              context: context, message: errorData.message!);
         }
       },
     );

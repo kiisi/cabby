@@ -5,14 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData getApplicationTheme() {
   return ThemeData(
-    fontFamily: GoogleFonts.poppins().fontFamily,
+    fontFamily: GoogleFonts.notoSans().fontFamily,
     primaryColor: ColorManager.primary,
     colorScheme: ColorScheme.light(
         primary: ColorManager.primary, secondary: ColorManager.white),
     inputDecorationTheme: InputDecorationTheme(
         focusColor: ColorManager.blueDark,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: ColorManager.blueDark),
+          borderSide: const BorderSide(color: Colors.transparent),
           borderRadius: BorderRadius.circular(AppSize.s10),
         ),
         focusedBorder: OutlineInputBorder(

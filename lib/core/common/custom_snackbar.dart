@@ -19,11 +19,11 @@ class CustomSnackbar {
       ),
       behavior: SnackBarBehavior.floating,
       duration: duration,
-      margin: margin ??
-          const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 10,
-          ),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).size.height - 340,
+        right: 10,
+        left: 10,
+      ),
       backgroundColor: Colors.red,
       showCloseIcon: true,
       closeIconColor: ColorManager.white,
@@ -48,7 +48,11 @@ class CustomSnackbar {
       ),
       behavior: SnackBarBehavior.floating,
       duration: duration,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).size.height - 340,
+        right: 10,
+        left: 10,
+      ),
       backgroundColor: ColorManager.primary,
       showCloseIcon: true,
     );
@@ -72,7 +76,11 @@ class CustomSnackbar {
       ),
       behavior: SnackBarBehavior.floating,
       duration: duration,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).size.height - 340,
+        right: 10,
+        left: 10,
+      ),
       backgroundColor: Colors.grey.shade800,
       showCloseIcon: true,
       closeIconColor: ColorManager.white,

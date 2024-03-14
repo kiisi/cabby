@@ -1,4 +1,6 @@
-import 'package:cabby/app/constants.dart';
+import 'package:cabby/app/app_prefs.dart';
+import 'package:cabby/app/di.dart';
+import 'package:cabby/core/common/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -11,17 +13,19 @@ const String authorization = "authorization";
 const String defaultLanguage = "language";
 
 class DioFactory {
-  DioFactory();
+  final AppPreferences _appPreferences;
+
+  DioFactory(this._appPreferences);
 
   Future<Dio> getDio() async {
     Dio dio = Dio();
-    const Duration timeout = Duration(milliseconds: 60 * 1000);
+    const Duration timeout = Duration(milliseconds: 16 * 1000);
     String language = "en";
 
     Map<String, dynamic>? headers = {
       contentType: applicationJson,
       accept: applicationJson,
-      authorization: Constant.token,
+      authorization: await _appPreferences.getAccessToken(),
       defaultLanguage: language
     };
 
