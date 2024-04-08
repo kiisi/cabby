@@ -1,7 +1,6 @@
 import 'package:cabby/core/common/constants.dart';
 import 'package:cabby/data/responses/responses.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/http.dart';
 
 part 'app_api.g.dart';
@@ -14,6 +13,7 @@ abstract class AppServiceClient {
   Future<AuthenticationResponse> getStarted({
     @Field("countryCode") required String countryCode,
     @Field("phoneNumber") required String phoneNumber,
+    @Field("email") required String email,
   });
 
   @POST('/auth/otp-verify')
@@ -44,18 +44,52 @@ abstract class GoogleMapsServiceClient {
   @GET('/geocode/json')
   Future<dynamic> reverseGeoCode({
     @Query("latlng") required String latlng,
-    @Query("key") required String key,
+    @Query("key") String key = Constant.googleMapApiKey,
   });
 
   @GET('/place/autocomplete/json')
   Future<dynamic> autoCompleteSearch({
     @Query("input") required String input,
-    @Query("key") required String key,
+    @Query("key") String key = Constant.googleMapApiKey,
   });
 
   @GET('/place/details/json')
-  Future<dynamic> placeDirectionDetails({
+  Future<dynamic> placeLocationDetails({
     @Query("place_id") required String placeId,
-    @Query("key") required String key,
+    @Query("key") String key = Constant.googleMapApiKey,
+  });
+
+  @GET('/directions/json')
+  Future<dynamic> placeLocationDirection({
+    @Query("destination") required String destination,
+    @Query("origin") required String origin,
+    @Query("key") String key = Constant.googleMapApiKey,
+  });
+}
+
+@RestApi(baseUrl: Constant.googleMapBaseUrl)
+abstract class GoogleMapsRouteServiceClient {
+  factory GoogleMapsRouteServiceClient(Dio dio, {String baseUrl}) =
+      _GoogleMapsRouteServiceClient;
+
+  @POST('/geocode/json')
+  @Headers(<String, dynamic>{
+    'Content-Type': 'application/json',
+    'X-Goog-Api-Key': Constant.googleMapApiKey,
+    'X-Goog-FieldMask':
+        'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+  })
+  Future<dynamic> getRoute({
+    @Field("origin") required dynamic origin,
+    @Field("destination") required dynamic destination,
+    @Field("travelMode") String travelMode = "DRIVE",
+    @Field("routingPreference") String routingPreference = "TRAFFIC_AWARE",
+    @Field("computeAlternativeRoutes") bool computeAlternativeRoutes = false,
+    @Field("routeModifiers") dynamic routeModifiers = const {
+      "avoidTolls": false,
+      "avoidHighways": false,
+      "avoidFerries": true
+    },
+    @Field("languageCode") String languageCode = "en-US",
   });
 }

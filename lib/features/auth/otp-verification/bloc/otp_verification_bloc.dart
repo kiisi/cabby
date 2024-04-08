@@ -10,10 +10,11 @@ part 'otp_verification_state.dart';
 class OtpVerificationBloc
     extends Bloc<OtpVerificationEvent, OtpVerificationState> {
   final OtpVerifyUseCase _otpVerifyUseCase;
-  final String phoneNumber;
-  final String countryCode;
+  final String? phoneNumber;
+  final String? email;
+  final String? countryCode;
   OtpVerificationBloc(this._otpVerifyUseCase,
-      {required this.phoneNumber, required this.countryCode})
+      {this.phoneNumber, this.countryCode, this.email})
       : super(OtpVerificationState()) {
     on<OtpVerificationEvent>((event, emit) async {
       if (event is OtpVerificationSetOtp) {
@@ -25,13 +26,14 @@ class OtpVerificationBloc
         emit(state.copyWith(
           countryCode: countryCode,
           phoneNumber: phoneNumber,
+          email: email,
           formStatus: FormSubmitting(),
         ));
 
         (await _otpVerifyUseCase.execute(
           OtpVerifyRequest(
-            countryCode: countryCode,
-            phoneNumber: phoneNumber,
+            countryCode: countryCode ?? '',
+            phoneNumber: phoneNumber ?? '',
             otp: state.otp ?? '',
           ),
         ))

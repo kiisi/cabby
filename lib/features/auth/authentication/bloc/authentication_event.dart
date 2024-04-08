@@ -4,8 +4,13 @@ part of 'authentication_bloc.dart';
 abstract class AuthenticationEvent {}
 
 class AuthenticationSetPhoneNumber extends AuthenticationEvent {
-  final String phoneNumber;
+  final String? phoneNumber;
   AuthenticationSetPhoneNumber({required this.phoneNumber});
+}
+
+class AuthenticationSetEmail extends AuthenticationEvent {
+  final String? email;
+  AuthenticationSetEmail({required this.email});
 }
 
 class AuthenticationSetCountryCode extends AuthenticationEvent {

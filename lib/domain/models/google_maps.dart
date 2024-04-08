@@ -1,20 +1,25 @@
 class ReverseGeoCodeQuery {
   final String latlng;
-  final String key;
 
-  ReverseGeoCodeQuery({required this.latlng, required this.key});
+  ReverseGeoCodeQuery({required this.latlng});
 }
 
 class AutoCompleteSearchQuery {
   final String input;
-  final String key;
 
-  AutoCompleteSearchQuery({required this.input, required this.key});
+  AutoCompleteSearchQuery({required this.input});
 }
 
-class PlaceDirectionDetailsQuery {
+class PlaceLocationDetailsQuery {
   final String placeId;
-  final String key;
 
-  PlaceDirectionDetailsQuery({required this.placeId, required this.key});
+  PlaceLocationDetailsQuery({required this.placeId});
+}
+
+class PlaceLocationDirectionQuery {
+  final String destination;
+  final String origin;
+
+  PlaceLocationDirectionQuery(
+      {required this.destination, required this.origin});
 }

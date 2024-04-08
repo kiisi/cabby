@@ -29,15 +29,28 @@ class AutoCompleteSearchUseCase
   }
 }
 
-class PlaceDirectionDetailsUseCase
-    implements BaseUseCase<PlaceDirectionDetailsQuery, dynamic> {
+class PlaceLocationDetailsUseCase
+    implements BaseUseCase<PlaceLocationDetailsQuery, dynamic> {
   final GoogleMapsRepository _googleMapsRepository;
 
-  PlaceDirectionDetailsUseCase(this._googleMapsRepository);
+  PlaceLocationDetailsUseCase(this._googleMapsRepository);
 
   @override
   Future<Either<Failure, dynamic>> execute(
-      PlaceDirectionDetailsQuery input) async {
-    return await _googleMapsRepository.placeDirectionDetails(input);
+      PlaceLocationDetailsQuery input) async {
+    return await _googleMapsRepository.placeLocationDetails(input);
+  }
+}
+
+class PlaceLocationDirectionUseCase
+    implements BaseUseCase<PlaceLocationDirectionQuery, dynamic> {
+  final GoogleMapsRepository _googleMapsRepository;
+
+  PlaceLocationDirectionUseCase(this._googleMapsRepository);
+
+  @override
+  Future<Either<Failure, dynamic>> execute(
+      PlaceLocationDirectionQuery input) async {
+    return await _googleMapsRepository.placeLocationDirection(input);
   }
 }

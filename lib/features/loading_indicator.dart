@@ -35,7 +35,7 @@ class _LoadingIndicatorScreenState extends State<LoadingIndicatorScreen> {
       },
       (success) => {
         print('Success $success'),
-        context.router.replaceAll([HomeRoute()])
+        context.router.replaceAll([const HomeRoute()])
       },
     );
   }

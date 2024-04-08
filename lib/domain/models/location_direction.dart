@@ -1,30 +1,15 @@
 class LocationDirection {
-  final double latitude;
-  final double longitude;
-  final String address;
+  final int durationValue;
+  final int distanceValue;
+  final String durationText;
+  final String distanceText;
+  final String encodedPoints;
 
-  LocationDirection(
-      {required this.latitude, required this.longitude, required this.address});
-}
-
-class LocationPredictionAutoComplete {
-  String? placeId;
-  String? mainText;
-  String? secondaryText;
-  List<String>? locationType;
-
-  LocationPredictionAutoComplete({
-    this.placeId,
-    this.mainText,
-    this.secondaryText,
-    this.locationType,
+  LocationDirection({
+    required this.durationValue,
+    required this.distanceValue,
+    required this.durationText,
+    required this.distanceText,
+    required this.encodedPoints,
   });
-
-  LocationPredictionAutoComplete.fromJson(Map<String, dynamic> jsonData) {
-    placeId = jsonData['place_id'];
-    mainText = jsonData['structured_formatting']['main_text'];
-    secondaryText = jsonData['structured_formatting']['secondary_text'];
-    locationType =
-        (jsonData['types'] as List).map((e) => e.toString()).toList();
-  }
 }

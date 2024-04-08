@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,9 @@ class AppDrawer extends StatelessWidget {
             _divider(),
             DrawerItem(
               icon: Icons.payment,
-              onTap: () {},
+              onTap: () async {
+                await context.router.pushNamed('/payment');
+              },
               title: 'Payment',
             ),
             DrawerItem(

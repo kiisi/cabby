@@ -19,6 +19,11 @@ class AuthenticationBloc
           phoneNumber: event.phoneNumber,
           formStatus: const FormInitialStatus(),
         ));
+      } else if (event is AuthenticationSetEmail) {
+        emit(state.copyWith(
+          email: event.email,
+          formStatus: const FormInitialStatus(),
+        ));
       } else if (event is AuthenticationSetCountryCode) {
         emit(state.copyWith(
           countryCode: event.countryCode,
@@ -32,6 +37,7 @@ class AuthenticationBloc
         (await _getStartedUseCase.execute(
           GetStartedRequest(
             countryCode: state.countryCode,
+            email: state.email ?? '',
             phoneNumber: state.phoneNumber ?? '',
           ),
         ))

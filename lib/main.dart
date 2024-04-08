@@ -2,14 +2,18 @@ import 'dart:async';
 
 import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/app/di.dart';
+import 'package:cabby/core/common/constants.dart';
 import 'package:cabby/core/resources/theme_manager.dart';
 import 'package:cabby/core/routes/app_router.dart';
 import 'package:cabby/core/services/location_service.dart';
+import 'package:cabby/features/auth/authentication/bloc/authentication_bloc.dart';
 import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_locations_bloc.dart';
+import 'package:cabby/features/passenger/payment/bloc/payment_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -20,20 +24,16 @@ void main() async {
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
-  if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = true;
-    initializeMapRenderer();
-  }
+  // Stripe
+  Stripe.publishableKey = Constant.stripePublishableKey;
+
+  initializeMapRenderer();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      // statusBarBrightness: Brightness.dark,
       statusBarColor: Colors.transparent, // Background color of the status bar
-      // statusBarIconBrightness: Brightness.light,
       statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
     ),
   );
   SystemChrome.setPreferredOrientations(
@@ -61,6 +61,7 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    mapsImplementation.useAndroidViewSurface = true;
     unawaited(mapsImplementation
         .initializeWithRenderer(AndroidMapRenderer.latest)
         .then((AndroidMapRenderer initializedRenderer) =>
@@ -117,7 +118,6 @@ class _MyAppState extends State<MyApp> {
     );
     positionStream.handleError((error) {
       // print("=============GEOLOCATOR ERROR=======");
-      // print(error);
       _locationServiceBloc.add(LocationServiceDisabled());
     }).listen((position) {
       // print("========GEOLOCATOR SUCCESS==========");
@@ -143,6 +143,12 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider<PassengerLocationsBloc>(
           create: (BuildContext context) => getIt<PassengerLocationsBloc>(),
+        ),
+        BlocProvider<PaymentBloc>(
+          create: (BuildContext context) => getIt<PaymentBloc>(),
+        ),
+        BlocProvider<AuthenticationBloc>(
+          create: (BuildContext context) => getIt<AuthenticationBloc>(),
         ),
       ],
       child: MaterialApp.router(

@@ -1,35 +1,26 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:flutter/material.dart';
 
-class CustomSnackbar {
-  static void showErrorSnackBar({
+class CustomFlushbar {
+  static void showErrorFlushBar({
     required BuildContext context,
-    required String message,
-    EdgeInsetsGeometry? margin,
-    Duration duration = const Duration(seconds: 3),
+    required String? message,
+    Duration duration = const Duration(seconds: 5),
   }) {
-    final snackBar = SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.white),
-        textAlign: TextAlign.left,
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-      ),
-      behavior: SnackBarBehavior.floating,
-      duration: duration,
-      margin: EdgeInsets.only(
-        bottom: MediaQuery.of(context).size.height - 340,
-        right: 10,
-        left: 10,
-      ),
-      backgroundColor: Colors.red,
-      showCloseIcon: true,
-      closeIconColor: ColorManager.white,
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Flushbar(
+      flushbarStyle: FlushbarStyle.GROUNDED,
+      icon: Icon(Icons.not_interested_outlined, color: ColorManager.white),
+      shouldIconPulse: false,
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: const Color(0xFFFC5521),
+      reverseAnimationCurve: Curves.linear,
+      forwardAnimationCurve: Curves.linear,
+      duration: const Duration(seconds: 5),
+      messageColor: ColorManager.white,
+      message: message,
+      animationDuration: const Duration(milliseconds: 400),
+    ).show(context);
   }
 
   static void showSuccessSnackBar({

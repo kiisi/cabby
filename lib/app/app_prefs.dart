@@ -1,3 +1,4 @@
+import 'package:cabby/domain/models/payment_methods.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String prefsOnboardingScreen = "PREFS_ONBOARDING_SCREEN";
@@ -5,6 +6,7 @@ const String prefsKeyIsUserLoggedIn = "PREFS_KEY_IS_USER_LOGGEDIN";
 const String prefsKeyAccessToken = "PREFS_KEY_ACCESS_TOKEN";
 const String prefsKeyLatitude = "PREFS_KEY_LATITUDE";
 const String prefsKeyLongitude = "PREFS_KEY_LONGITUDE";
+const String prefsKeyPaymentMethod = "PREFS_KEY_PAYMENT_METHOD";
 
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
@@ -41,5 +43,14 @@ class AppPreferences {
 
   double getLongitude() {
     return _sharedPreferences.getDouble(prefsKeyLongitude) ?? 0;
+  }
+
+  Future<void> setPaymentMethod(String paymentMethod) async {
+    _sharedPreferences.setString(prefsKeyPaymentMethod, paymentMethod);
+  }
+
+  String getPaymentMethod() {
+    return _sharedPreferences.getString(prefsKeyPaymentMethod) ??
+        PaymentMethods.cash;
   }
 }

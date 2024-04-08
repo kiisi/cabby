@@ -24,6 +24,7 @@ class AuthenticationRemoteDataSourceImpl
     return await _appServiceClient.getStarted(
       countryCode: getStartedRequest.countryCode,
       phoneNumber: getStartedRequest.phoneNumber,
+      email: getStartedRequest.email,
     );
   }
 

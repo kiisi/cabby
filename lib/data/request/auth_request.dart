@@ -1,9 +1,11 @@
 class GetStartedRequest {
   final String phoneNumber;
+  final String email;
   final String countryCode;
 
   GetStartedRequest({
     required this.phoneNumber,
+    required this.email,
     required this.countryCode,
   });
 }

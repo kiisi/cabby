@@ -6,8 +6,11 @@ abstract interface class GoogleMapsRemoteDataSource {
 
   Future<dynamic> autocompleteSearch(
       AutoCompleteSearchQuery autoCompleteSearchQuery);
-  Future<dynamic> placeDirectionDetails(
-      PlaceDirectionDetailsQuery placeDirectionDetailsQuery);
+  Future<dynamic> placeLocationDetails(
+      PlaceLocationDetailsQuery placeLocationDetailsQuery);
+
+  Future<dynamic> placeLocationDirection(
+      PlaceLocationDirectionQuery placeLocationDirectionQuery);
 }
 
 class GoogleMapsRemoteDataSourceImpl implements GoogleMapsRemoteDataSource {
@@ -20,7 +23,6 @@ class GoogleMapsRemoteDataSourceImpl implements GoogleMapsRemoteDataSource {
       ReverseGeoCodeQuery reverseGeoCodeQuery) async {
     return await _googleMapsServiceClient.reverseGeoCode(
       latlng: reverseGeoCodeQuery.latlng,
-      key: reverseGeoCodeQuery.key,
     );
   }
 
@@ -29,16 +31,23 @@ class GoogleMapsRemoteDataSourceImpl implements GoogleMapsRemoteDataSource {
       AutoCompleteSearchQuery autoCompleteSearchQuery) async {
     return await _googleMapsServiceClient.autoCompleteSearch(
       input: autoCompleteSearchQuery.input,
-      key: autoCompleteSearchQuery.key,
     );
   }
 
   @override
-  Future placeDirectionDetails(
-      PlaceDirectionDetailsQuery placeDirectionDetailsQuery) async {
-    return await _googleMapsServiceClient.placeDirectionDetails(
-      placeId: placeDirectionDetailsQuery.placeId,
-      key: placeDirectionDetailsQuery.key,
+  Future placeLocationDetails(
+      PlaceLocationDetailsQuery placeLocationDetailsQuery) async {
+    return await _googleMapsServiceClient.placeLocationDetails(
+      placeId: placeLocationDetailsQuery.placeId,
+    );
+  }
+
+  @override
+  Future placeLocationDirection(
+      PlaceLocationDirectionQuery placeLocationDirectionQuery) async {
+    return await _googleMapsServiceClient.placeLocationDirection(
+      destination: placeLocationDirectionQuery.destination,
+      origin: placeLocationDirectionQuery.origin,
     );
   }
 }

@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _kGooglePlex = CameraPosition(
       target:
           LatLng(_appPreferences.getLatitude(), _appPreferences.getLongitude()),
-      zoom: 17,
+      zoom: 18,
     );
     super.initState();
   }
@@ -130,164 +130,163 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _bottomSheet() {
-    return BottomSheet(
-      enableDrag: false,
-      onClosing: () {},
-      builder: (BuildContext context) {
-        return SizedBox(
-          child: IntrinsicHeight(
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _pickupLocationBox(),
-                  const SizedBox(
-                    height: AppSize.s12,
+    return BlocBuilder<PassengerLocationsBloc, PassengerLocationsState>(
+      builder: (context, state) {
+        return BottomSheet(
+          enableDrag: false,
+          onClosing: () {},
+          builder: (BuildContext context) {
+            return SizedBox(
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _pickupLocationBox(state),
+                      const SizedBox(
+                        height: AppSize.s12,
+                      ),
+                      _destinationLocationBox(state),
+                      const SizedBox(
+                        height: AppSize.s12,
+                      ),
+                      Button(
+                        onPressed: () async {
+                          if (state.pickupLocation?.address != null &&
+                              state.destinationLocation?.address != null) {
+                            await context.router
+                                .pushNamed('/passenger-journey');
+                          } else {
+                            await context.router
+                                .pushNamed('/passenger-locations');
+                          }
+                        },
+                        child: const Text(
+                          'Find a Cab',
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
-                  _destinationLocationBox(),
-                  const SizedBox(
-                    height: AppSize.s12,
-                  ),
-                  Button(
-                    onPressed: () {},
-                    child: const Text(
-                      'Find a Cab',
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _pickupLocationBox() {
-    return BlocBuilder<PassengerLocationsBloc, PassengerLocationsState>(
-      builder: (context, state) {
-        return SizedBox(
+  Widget _pickupLocationBox(PassengerLocationsState state) {
+    return SizedBox(
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        child: Container(
+          height: AppSize.s50,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: ColorManager.whiteGrey,
+            borderRadius: BorderRadius.circular(AppSize.s10),
+            border: Border.all(color: ColorManager.blueDark),
+          ),
           child: Material(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4.0)),
-            child: Container(
-              height: AppSize.s50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: ColorManager.whiteGrey,
-                borderRadius: BorderRadius.circular(AppSize.s10),
-                border: Border.all(color: ColorManager.blueDark),
-              ),
-              child: Material(
-                type: MaterialType.transparency,
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppSize.s10),
-                  onTap: () async {
-                    await context.router.pushNamed('/passenger-locations');
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSize.s10),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: AppSize.s24,
-                          child: UnconstrainedBox(
-                            child: Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                    color: ColorManager.blue, width: 5),
-                              ),
-                            ),
+            type: MaterialType.transparency,
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AppSize.s10),
+              onTap: () async {
+                await context.router.pushNamed('/passenger-locations');
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: AppSize.s10),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: AppSize.s24,
+                      child: UnconstrainedBox(
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            border:
+                                Border.all(color: ColorManager.blue, width: 5),
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: Text(
-                            state.pickupLocation?.address ?? 'Pickup Location',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: state.pickupLocation?.address == null
-                                    ? ThemeData.light().hintColor
-                                    : null),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      child: Text(
+                        state.pickupLocation?.address ?? 'Pickup Location',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: state.pickupLocation?.address == null
+                                ? ThemeData.light().hintColor
+                                : null),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _destinationLocationBox() {
-    return BlocBuilder<PassengerLocationsBloc, PassengerLocationsState>(
-      builder: (context, state) {
-        return SizedBox(
+  Widget _destinationLocationBox(PassengerLocationsState state) {
+    return SizedBox(
+      child: Material(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        child: Container(
+          height: AppSize.s50,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: ColorManager.whiteGrey,
+            borderRadius: BorderRadius.circular(AppSize.s10),
+            border: Border.all(color: ColorManager.blueDark),
+          ),
           child: Material(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4.0)),
-            child: Container(
-              height: AppSize.s50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: ColorManager.whiteGrey,
-                borderRadius: BorderRadius.circular(AppSize.s10),
-                border: Border.all(color: ColorManager.blueDark),
-              ),
-              child: Material(
-                type: MaterialType.transparency,
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppSize.s10),
-                  onTap: () async {
-                    await context.router.pushNamed('/passenger-locations');
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSize.s10),
-                    child: Row(
-                      children: [
-                        Icon(Icons.search,
-                            color: ColorManager.blue, weight: 900),
-                        const SizedBox(
-                          width: AppSize.s10,
-                        ),
-                        Flexible(
-                          child: Text(
-                            state.destinationLocation?.address ??
-                                'Destination Location',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color:
-                                    state.destinationLocation?.address == null
-                                        ? ThemeData.light().hintColor
-                                        : null),
-                          ),
-                        )
-                      ],
+            type: MaterialType.transparency,
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(AppSize.s10),
+              onTap: () async {
+                await context.router.pushNamed('/passenger-locations');
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: AppSize.s10),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: ColorManager.blue, weight: 900),
+                    const SizedBox(
+                      width: AppSize.s10,
                     ),
-                  ),
+                    Flexible(
+                      child: Text(
+                        state.destinationLocation?.shortAddress ??
+                            'Destination Location',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: state.destinationLocation?.address == null
+                                ? ThemeData.light().hintColor
+                                : null),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

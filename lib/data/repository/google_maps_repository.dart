@@ -10,8 +10,11 @@ abstract interface class GoogleMapsRepository {
   Future<Either<Failure, dynamic>> autoCompleteSearch(
       AutoCompleteSearchQuery autoCompleteSearchQuery);
 
-  Future<Either<Failure, dynamic>> placeDirectionDetails(
-      PlaceDirectionDetailsQuery placeDirectionDetailsQuery);
+  Future<Either<Failure, dynamic>> placeLocationDetails(
+      PlaceLocationDetailsQuery placeLocationDetailsQuery);
+
+  Future<Either<Failure, dynamic>> placeLocationDirection(
+      PlaceLocationDirectionQuery placeLocationDirectionQuery);
 }
 
 class GoogleMapsRepositoryImpl implements GoogleMapsRepository {
@@ -44,11 +47,23 @@ class GoogleMapsRepositoryImpl implements GoogleMapsRepository {
   }
 
   @override
-  Future<Either<Failure, dynamic>> placeDirectionDetails(
-      PlaceDirectionDetailsQuery placeDirectionDetailsQuery) async {
+  Future<Either<Failure, dynamic>> placeLocationDetails(
+      PlaceLocationDetailsQuery placeLocationDetailsQuery) async {
     try {
       final response = await _googleMapsRemoteDataSource
-          .placeDirectionDetails(placeDirectionDetailsQuery);
+          .placeLocationDetails(placeLocationDetailsQuery);
+      return Right(response);
+    } catch (error) {
+      return Left(FailureExceptionHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, dynamic>> placeLocationDirection(
+      PlaceLocationDirectionQuery placeLocationDirectionQuery) async {
+    try {
+      final response = await _googleMapsRemoteDataSource
+          .placeLocationDirection(placeLocationDirectionQuery);
       return Right(response);
     } catch (error) {
       return Left(FailureExceptionHandler.handle(error).failure);

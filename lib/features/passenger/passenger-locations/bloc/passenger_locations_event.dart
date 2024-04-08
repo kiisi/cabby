@@ -20,8 +20,9 @@ class PassengerLocationsDestination extends PassengerLocationsEvent {
 
 class LocationAutoCompleteSearch extends PassengerLocationsEvent {
   final String? input;
+  final InputFocus inputFocus;
 
-  LocationAutoCompleteSearch({required this.input});
+  LocationAutoCompleteSearch({required this.input, required this.inputFocus});
 }
 
 class PassengerLocationDetails extends PassengerLocationsEvent {
@@ -30,3 +31,26 @@ class PassengerLocationDetails extends PassengerLocationsEvent {
 
   PassengerLocationDetails({required this.placeId, required this.inputFocus});
 }
+
+class LocationsInputUpdater extends PassengerLocationsEvent {
+  final String? input;
+  final InputFocus inputFocus;
+
+  LocationsInputUpdater({required this.input, required this.inputFocus});
+}
+
+class PassengerLocationDirection extends PassengerLocationsEvent {
+  final LatLng origin;
+  final LatLng destination;
+
+  PassengerLocationDirection({
+    required this.origin,
+    required this.destination,
+  });
+}
+
+class PassengerLoadingStatusIdle extends PassengerLocationsEvent {}
+
+class PassengerLocationsPickupDiscard extends PassengerLocationsEvent {}
+
+class PassengerLocationsDestinationDiscard extends PassengerLocationsEvent {}
