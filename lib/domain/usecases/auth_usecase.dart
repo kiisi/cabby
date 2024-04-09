@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cabby/data/network/failure.dart';
 import 'package:cabby/data/repository/auth_repository.dart';
 import 'package:cabby/data/request/auth_request.dart';
@@ -41,5 +43,16 @@ class GetStartedUserInfoUseCase
   Future<Either<Failure, AuthenticationResponse>> execute(
       GetStartedUserInfoRequest input) async {
     return await _authenticationRepository.getStartedUserInfo(input);
+  }
+}
+
+class UserAuthUseCase implements BaseUseCase<void, AuthenticationResponse> {
+  final AuthenticationRepository _authenticationRepository;
+
+  UserAuthUseCase(this._authenticationRepository);
+
+  @override
+  Future<Either<Failure, AuthenticationResponse>> execute(void input) async {
+    return await _authenticationRepository.userAuth();
   }
 }

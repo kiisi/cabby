@@ -13,6 +13,8 @@ abstract interface class AuthenticationRepository {
 
   Future<Either<Failure, AuthenticationResponse>> getStartedUserInfo(
       GetStartedUserInfoRequest getStartedUserInfoRequest);
+
+  Future<Either<Failure, AuthenticationResponse>> userAuth();
 }
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
@@ -50,6 +52,16 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     try {
       final response = await _authenticationRemoteDataSource
           .getStartedUserInfo(getStartedUserInfoRequest);
+      return Right(response);
+    } catch (error) {
+      return Left(FailureExceptionHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthenticationResponse>> userAuth() async {
+    try {
+      final response = await _authenticationRemoteDataSource.userAuth();
       return Right(response);
     } catch (error) {
       return Left(FailureExceptionHandler.handle(error).failure);

@@ -9,6 +9,7 @@ abstract interface class AuthenticationRemoteDataSource {
       OtpVerifyRequest otpVerifyRequest);
   Future<AuthenticationResponse> getStartedUserInfo(
       GetStartedUserInfoRequest getStartedUserInfoRequest);
+  Future<AuthenticationResponse> userAuth();
 }
 
 class AuthenticationRemoteDataSourceImpl
@@ -23,6 +24,7 @@ class AuthenticationRemoteDataSourceImpl
     return await _appServiceClient.getStarted(
       countryCode: getStartedRequest.countryCode,
       phoneNumber: getStartedRequest.phoneNumber,
+      email: getStartedRequest.email,
     );
   }
 
@@ -46,5 +48,10 @@ class AuthenticationRemoteDataSourceImpl
       lastName: getStartedUserInfoRequest.lastName,
       gender: getStartedUserInfoRequest.gender,
     );
+  }
+
+  @override
+  Future<AuthenticationResponse> userAuth() async {
+    return await _appServiceClient.userAuth();
   }
 }

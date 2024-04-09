@@ -5,6 +5,7 @@ import 'package:cabby/core/resources/assets_manager.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
 import 'package:cabby/core/resources/values_manager.dart';
+import 'package:cabby/core/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -67,28 +68,24 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                height: AppSize.s54,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSize.s10),
-                      ),
-                      backgroundColor: ColorManager.blue,
-                      foregroundColor: ColorManager.white),
-                  onPressed: () {
-                    context.router.replaceNamed('/authentication');
-                  },
-                  child: const Text(
-                    AppStrings.getStarted,
-                    style: TextStyle(
-                        fontSize: AppSize.s18, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
+              _getStartedButton(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getStartedButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: Button(
+        onPressed: () {
+          context.router.replaceNamed('/authentication');
+        },
+        child: const Text(
+          AppStrings.getStarted,
+          style: TextStyle(fontSize: AppSize.s18, fontWeight: FontWeight.w600),
         ),
       ),
     );

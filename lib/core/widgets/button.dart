@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class Button extends ElevatedButton {
   final bool loading;
+  final double? borderRadius;
 
   Button({
     Key? key,
@@ -16,18 +17,19 @@ class Button extends ElevatedButton {
     EdgeInsetsGeometry? padding,
     Widget? child,
     this.loading = false,
+    this.borderRadius = AppSize.s10,
   }) : super(
           key: key,
           onPressed: onPressed,
           onLongPress: onLongPress,
           style: ElevatedButton.styleFrom(
             fixedSize: const Size.fromHeight(AppSize.s54),
-            disabledBackgroundColor: ColorManager.blue,
+            disabledBackgroundColor: Colors.blue,
             disabledForegroundColor: ColorManager.whiteSmoke,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSize.s10),
+              borderRadius: BorderRadius.circular(borderRadius ?? AppSize.s10),
             ),
-            backgroundColor: ColorManager.blue,
+            backgroundColor: Colors.blue,
             foregroundColor: ColorManager.white,
           ),
           focusNode: focusNode,

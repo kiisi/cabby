@@ -6,17 +6,30 @@ import 'app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
 class AppRouter extends $AppRouter {
+  List<AutoRoute> guardedRoutes(List<AutoRoute> routes, AutoRouteGuard guard) {
+    return routes.map((route) => route.copyWith(guards: [guard])).toList();
+  }
+
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
-            path: '/onboarding',
-            page: OnBoardingRoute.page,
-            initial: true,
-            guards: [OnBoardingGuard()]),
+          path: '/loading-indicator',
+          page: LoadingIndicatorRoute.page,
+          initial: true,
+        ),
+        AutoRoute(
+          path: '/onboarding',
+          page: OnBoardingRoute.page,
+          guards: [OnBoardingGuard()],
+        ),
         AutoRoute(path: '/authentication', page: AuthenticationRoute.page),
         AutoRoute(path: '/otp-verification', page: OtpVerificationRoute.page),
         AutoRoute(path: '/welcome-user', page: WelcomeUserRoute.page),
         AutoRoute(path: '/home', page: HomeRoute.page),
+        AutoRoute(
+            path: '/passenger-locations', page: PassengerLocationsRoute.page),
+        AutoRoute(path: '/passenger-journey', page: PassengerJourneyRoute.page),
+        AutoRoute(path: '/payment', page: PaymentRoute.page),
       ];
 }
 
@@ -28,7 +41,6 @@ class OnBoardingGuard extends AutoRouteGuard {
       NavigationResolver resolver, StackRouter router) async {
     bool isOnBoardingScreenViewed =
         await _appPreferences.isOnBoardingScreenViewed();
-    print(isOnBoardingScreenViewed);
 
     if (isOnBoardingScreenViewed) {
       router.push(const AuthenticationRoute());

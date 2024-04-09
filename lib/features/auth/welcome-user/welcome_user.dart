@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cabby/app/di.dart';
-import 'package:cabby/core/common/custom_snackbar.dart';
+import 'package:cabby/core/common/custom_flushbar.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
@@ -237,16 +237,12 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
     return BlocConsumer<WelcomeUserBloc, WelcomeUserState>(
       listener: (context, state) {
         if (state.formStatus is FormSubmissionSuccess) {
-          FormSubmissionSuccess<DataResponse> successData =
-              (state.formStatus as FormSubmissionSuccess<DataResponse>);
-          CustomSnackbar.showSuccessSnackBar(
-              context: context, message: successData.message!);
           context.router.replaceNamed('/home');
         } else if (state.formStatus is FormSubmissionFailed) {
           FormSubmissionFailed errorData =
               (state.formStatus as FormSubmissionFailed);
-          CustomSnackbar.showErrorSnackBar(
-              context: context, message: errorData.message!);
+          CustomFlushbar.showErrorFlushBar(
+              context: context, message: errorData.message);
         }
       },
       builder: (context, state) {

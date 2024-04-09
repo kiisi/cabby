@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/app/di.dart';
-import 'package:cabby/core/common/custom_snackbar.dart';
+import 'package:cabby/core/common/custom_flushbar.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
@@ -18,8 +18,10 @@ import 'package:sms_autofill/sms_autofill.dart';
 @RoutePage()
 class OtpVerificationScreen extends StatefulWidget {
   final String? phoneNumber;
+  final String? email;
   final String? countryCode;
-  const OtpVerificationScreen({super.key, this.countryCode, this.phoneNumber});
+  const OtpVerificationScreen(
+      {super.key, this.countryCode, this.phoneNumber, this.email});
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -48,6 +50,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         getIt<OtpVerifyUseCase>(),
         countryCode: widget.countryCode ?? '',
         phoneNumber: widget.phoneNumber ?? '',
+        email: widget.email ?? '',
       ),
       child: Scaffold(
         backgroundColor: ColorManager.black,
@@ -111,7 +114,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   Widget _title() {
     return Text(
-      'Check your Phone',
+      'Check your Email',
       style: TextStyle(
         fontSize: AppSize.s24,
         color: ColorManager.white,
@@ -128,7 +131,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         children: [
           const TextSpan(text: "We sent a 6-digit code to "),
           TextSpan(
-            text: widget.phoneNumber,
+            text: widget.email,
             style: const TextStyle(
               fontWeight: FontWeight.w500,
             ),
@@ -162,7 +165,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
             ),
             currentCode: state.otp,
-            onCodeSubmitted: (code) {},
             onCodeChanged: (code) {
               context
                   .read<OtpVerificationBloc>()
@@ -187,19 +189,22 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           FormSubmissionSuccess<DataResponse> successData =
               (state.formStatus as FormSubmissionSuccess<DataResponse>);
           _appPreferences.setAccessToken(successData.data?.token);
-          CustomSnackbar.showSuccessSnackBar(
-              context: context, message: successData.message!);
-          context.router.replaceAll([
-            WelcomeUserRoute(
-              phoneNumber: state.phoneNumber,
-              countryCode: state.countryCode,
-            )
-          ]);
+
+          if (successData.data?.user?.isProfileComplete == true) {
+            context.router.replaceAll([const HomeRoute()]);
+          } else {
+            context.router.replaceAll([
+              WelcomeUserRoute(
+                phoneNumber: state.phoneNumber,
+                countryCode: state.countryCode,
+              )
+            ]);
+          }
         } else if (state.formStatus is FormSubmissionFailed) {
           FormSubmissionFailed errorData =
               (state.formStatus as FormSubmissionFailed);
-          CustomSnackbar.showErrorSnackBar(
-              context: context, message: errorData.message!);
+          CustomFlushbar.showErrorFlushBar(
+              context: context, message: errorData.message);
         }
       },
       builder: (context, state) {

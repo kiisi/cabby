@@ -12,9 +12,11 @@ class FailureExceptionHandler implements Exception {
 
   FailureExceptionHandler.handle(dynamic error) {
     failure = Failure(
-        statusCode: NetworkExceptions.getDioStatus(error),
-        message: NetworkExceptions.getErrorMessage(
-            NetworkExceptions.getDioException(error)));
+      statusCode: NetworkExceptions.getDioStatus(error),
+      message: NetworkExceptions.getErrorMessage(
+        NetworkExceptions.getDioException(error),
+      ),
+    );
   }
 }
 

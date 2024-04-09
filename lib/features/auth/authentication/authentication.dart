@@ -1,6 +1,7 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cabby/app/di.dart';
-import 'package:cabby/core/common/custom_snackbar.dart';
+import 'package:cabby/core/common/custom_flushbar.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
@@ -59,7 +60,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 left: AppPadding.p15,
                 right: AppPadding.p15,
                 bottom: AppPadding.p20,
-                top: AppSize.s200,
+                top: AppSize.s160,
               ),
               child: Form(
                 key: _formKey,
@@ -73,11 +74,15 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       ],
                     ),
                     const SizedBox(
-                      height: AppSize.s48,
+                      height: AppSize.s40,
                     ),
                     _phoneNumberInput(),
                     const SizedBox(
-                      height: AppSize.s28,
+                      height: AppSize.s20,
+                    ),
+                    _emailInput(),
+                    const SizedBox(
+                      height: AppSize.s20,
                     ),
                     _processButton(),
                   ],
@@ -164,9 +169,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     Text(
                       selectedCountry!.dialCode,
                       style: TextStyle(
-                          color: ColorManager.primary,
-                          fontSize: AppSize.s16,
-                          fontWeight: FontWeight.w600),
+                        color: ColorManager.blueDark,
+                        fontSize: AppSize.s16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(
                       width: AppSize.s10,
@@ -192,7 +198,41 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           style: TextStyle(
             color: ColorManager.white,
             fontSize: AppSize.s16,
-            fontWeight: FontWeight.w600,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _emailInput() {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        return TextFormField(
+          autofocus: true,
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (value) {
+            context
+                .read<AuthenticationBloc>()
+                .add(AuthenticationSetEmail(email: value));
+          },
+          decoration: InputDecoration(
+            errorText: state.emailErrorText,
+            hintText: "Email address",
+            hintStyle: TextStyle(
+                color: ColorManager.blueDark, fontWeight: FontWeight.w300),
+            prefixIcon: Icon(
+              Icons.email_outlined,
+              color: ColorManager.blueDark,
+            ),
+            fillColor: ColorManager.blackDark,
+            filled: true,
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: AppSize.s11_3, horizontal: AppSize.s12),
+          ),
+          cursorColor: ColorManager.white,
+          style: TextStyle(
+            color: ColorManager.white,
+            fontSize: AppSize.s16,
           ),
         );
       },
@@ -223,14 +263,16 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       },
       listener: (context, state) {
         if (state.formStatus is FormSubmissionSuccess) {
-          FormSubmissionSuccess successData =
-              (state.formStatus as FormSubmissionSuccess);
-          CustomSnackbar.showSuccessSnackBar(
-              context: context, message: successData.message!);
           context.router.push(OtpVerificationRoute(
             phoneNumber: state.phoneNumber,
             countryCode: state.countryCode,
+            email: state.email,
           ));
+        } else if (state.formStatus is FormSubmissionFailed) {
+          FormSubmissionFailed errorData =
+              (state.formStatus as FormSubmissionFailed);
+          CustomFlushbar.showErrorFlushBar(
+              context: context, message: errorData.message);
         }
       },
     );
