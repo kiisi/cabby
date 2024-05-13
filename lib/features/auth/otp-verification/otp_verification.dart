@@ -46,19 +46,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => OtpVerificationBloc(
-        getIt<OtpVerifyUseCase>(),
-        countryCode: widget.countryCode ?? '',
-        phoneNumber: widget.phoneNumber ?? '',
-        email: widget.email ?? '',
-      ),
+      create: (context) => OtpVerificationBloc(getIt<OtpVerifyUseCase>()),
       child: Scaffold(
         backgroundColor: ColorManager.black,
         appBar: AppBar(
           backgroundColor: ColorManager.black,
           leading: IconButton(
             onPressed: () {
-              context.router.pop();
+              context.router.maybePop();
             },
             icon: Icon(Icons.arrow_back, color: ColorManager.white),
           ),
@@ -88,20 +83,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   const SizedBox(
                     height: AppSize.s20,
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                          color: ColorManager.whiteSmoke,
-                          fontSize: AppSize.s16),
-                      children: [
-                        const TextSpan(text: "Didn't recieve code? "),
-                        TextSpan(
-                          text: "Resend Code",
-                          style: TextStyle(color: ColorManager.blue),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // RichText(
+                  //   text: TextSpan(
+                  //     style: TextStyle(
+                  //         color: ColorManager.whiteSmoke,
+                  //         fontSize: AppSize.s16),
+                  //     children: [
+                  //       const TextSpan(text: "Didn't recieve code? "),
+                  //       TextSpan(
+                  //         text: "Resend Code",
+                  //         style: TextStyle(color: ColorManager.blue),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
               _processButton(),
@@ -188,17 +183,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         if (state.formStatus is FormSubmissionSuccess) {
           FormSubmissionSuccess<DataResponse> successData =
               (state.formStatus as FormSubmissionSuccess<DataResponse>);
-          _appPreferences.setAccessToken(successData.data?.token);
+          _appPreferences.setAccessToken(successData.data?.accessToken);
 
           if (successData.data?.user?.isProfileComplete == true) {
             context.router.replaceAll([const HomeRoute()]);
           } else {
-            context.router.replaceAll([
-              WelcomeUserRoute(
-                phoneNumber: state.phoneNumber,
-                countryCode: state.countryCode,
-              )
-            ]);
+            context.router.replaceAll([WelcomeUserRoute()]);
           }
         } else if (state.formStatus is FormSubmissionFailed) {
           FormSubmissionFailed errorData =

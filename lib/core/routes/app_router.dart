@@ -30,6 +30,7 @@ class AppRouter extends $AppRouter {
             path: '/passenger-locations', page: PassengerLocationsRoute.page),
         AutoRoute(path: '/passenger-journey', page: PassengerJourneyRoute.page),
         AutoRoute(path: '/payment', page: PaymentRoute.page),
+        AutoRoute(path: '/profile', page: ProfileRoute.page),
       ];
 }
 

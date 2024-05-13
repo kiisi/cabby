@@ -1,8 +1,10 @@
 import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/data/data_source/google_maps_remote_data_source.dart';
+import 'package:cabby/data/data_source/passenger_remote_data_source.dart';
 import 'package:cabby/data/network/app_api.dart';
 import 'package:cabby/data/network/dio_factory.dart';
 import 'package:cabby/data/repository/google_maps_repository.dart';
+import 'package:cabby/data/repository/passenger_repository.dart';
 import 'package:cabby/features/auth/auth.di.dart';
 import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:cabby/features/passenger/passenger-locations/passenger.di.dart';
@@ -33,11 +35,20 @@ Future<void> initAppModule() async {
   getIt.registerLazySingleton<GoogleMapsServiceClient>(
       () => GoogleMapsServiceClient(dio));
 
+  getIt.registerLazySingleton<GoogleMapsRouteServiceClient>(
+      () => GoogleMapsRouteServiceClient(dio));
+
   getIt.registerLazySingleton<GoogleMapsRemoteDataSource>(
-      () => GoogleMapsRemoteDataSourceImpl(getIt()));
+      () => GoogleMapsRemoteDataSourceImpl(getIt(), getIt()));
+
+  getIt.registerLazySingleton<PassengerRemoteDataSource>(
+      () => PassengerRemoteDataSourceImpl(getIt()));
 
   getIt.registerLazySingleton<GoogleMapsRepository>(
       () => GoogleMapsRepositoryImpl(getIt()));
+
+  getIt.registerLazySingleton<PassengerRepository>(
+      () => PassengerRepositoryImpl(getIt()));
 
   // auth dependency injection
   authDependencyInjection();

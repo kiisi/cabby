@@ -1,4 +1,4 @@
-package com.example.cabby
+package com.cabby.app
 
 import io.flutter.embedding.android.FlutterActivity
 

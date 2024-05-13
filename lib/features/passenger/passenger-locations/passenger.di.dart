@@ -1,5 +1,6 @@
 import 'package:cabby/app/di.dart';
 import 'package:cabby/domain/usecases/google_maps_usecase.dart';
+import 'package:cabby/domain/usecases/passenger_usecase.dart';
 import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_locations_bloc.dart';
 
 void passengerDependencyInjection() {
@@ -17,4 +18,10 @@ void passengerDependencyInjection() {
 
   getIt.registerLazySingleton<PlaceLocationDirectionUseCase>(
       () => PlaceLocationDirectionUseCase(getIt()));
+
+  getIt.registerLazySingleton<PlaceLocationRouteUseCase>(
+      () => PlaceLocationRouteUseCase(getIt()));
+
+  getIt.registerLazySingleton<EstimatedFareUseCase>(
+      () => EstimatedFareUseCase(getIt()));
 }

@@ -1,6 +1,6 @@
 class LocationDirection {
-  final int durationValue;
-  final int distanceValue;
+  final double durationValue;
+  final double distanceValue;
   final String durationText;
   final String distanceText;
   final String encodedPoints;

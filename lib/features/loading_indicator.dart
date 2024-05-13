@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/app/di.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/values_manager.dart';
@@ -19,25 +20,37 @@ class LoadingIndicatorScreen extends StatefulWidget {
 
 class _LoadingIndicatorScreenState extends State<LoadingIndicatorScreen> {
   final UserAuthUseCase _userAuthUseCase = getIt<UserAuthUseCase>();
+
+  final AppPreferences _appPreferences = getIt<AppPreferences>();
+
   @override
   void initState() {
-    _bind();
+    _bind(context);
     super.initState();
   }
 
-  void _bind() async {
-    (await _userAuthUseCase.execute(null)).fold(
-      (failure) {
-        print("====Failure Error =====");
-        print("Failure ${failure.statusCode}");
-        print("Failure Message ${failure.message}");
-        context.router.replaceAll([const OnBoardingRoute()]);
-      },
-      (success) => {
-        print('Success $success'),
-        context.router.replaceAll([const HomeRoute()])
-      },
-    );
+  void _bind(BuildContext context) async {
+    bool isOnBoardingScreenViewed =
+        await _appPreferences.isOnBoardingScreenViewed();
+
+    if (isOnBoardingScreenViewed) {
+      (await _userAuthUseCase.execute(null)).fold(
+        (failure) {
+          print("====Failure Error =====");
+          print("Failure ${failure.statusCode}");
+          print("Failure Message ${failure.message}");
+          context.router.replaceAll([const AuthenticationRoute()]);
+        },
+        (success) => {
+          print('Success $success'),
+          context.router.replaceAll([const HomeRoute()])
+        },
+      );
+    } else {
+      (() {
+        context.router.popAndPush(const OnBoardingRoute());
+      })();
+    }
   }
 
   @override

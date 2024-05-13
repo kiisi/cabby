@@ -40,8 +40,15 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     try {
       final response = await _authenticationRemoteDataSource
           .otpVerifyRequest(otpVerifyRequest);
+
+      print("======RESPONSE======");
+      print(response);
+      print("======RESPONSE======");
       return Right(response);
     } catch (error) {
+      print("=======ERROR========");
+      print(error);
+      print("=======ERROR========");
       return Left(FailureExceptionHandler.handle(error).failure);
     }
   }

@@ -15,6 +15,9 @@ abstract interface class GoogleMapsRepository {
 
   Future<Either<Failure, dynamic>> placeLocationDirection(
       PlaceLocationDirectionQuery placeLocationDirectionQuery);
+
+  Future<Either<Failure, dynamic>> placeLocationRoute(
+      PlaceLocationRouteQuery placeLocationRouteQuery);
 }
 
 class GoogleMapsRepositoryImpl implements GoogleMapsRepository {
@@ -64,6 +67,18 @@ class GoogleMapsRepositoryImpl implements GoogleMapsRepository {
     try {
       final response = await _googleMapsRemoteDataSource
           .placeLocationDirection(placeLocationDirectionQuery);
+      return Right(response);
+    } catch (error) {
+      return Left(FailureExceptionHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, dynamic>> placeLocationRoute(
+      PlaceLocationRouteQuery placeLocationRouteQuery) async {
+    try {
+      final response = await _googleMapsRemoteDataSource
+          .placeLocationRoute(placeLocationRouteQuery);
       return Right(response);
     } catch (error) {
       return Left(FailureExceptionHandler.handle(error).failure);

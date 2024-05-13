@@ -6,7 +6,6 @@ import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
 import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/core/widgets/button.dart';
-import 'package:cabby/data/responses/responses.dart';
 import 'package:cabby/domain/usecases/auth_usecase.dart';
 import 'package:cabby/features/auth/welcome-user/bloc/welcome_user_bloc.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class WelcomeUserScreen extends StatefulWidget {
-  final String? phoneNumber;
-  final String? countryCode;
-  const WelcomeUserScreen({super.key, this.countryCode, this.phoneNumber});
+  const WelcomeUserScreen({super.key});
 
   @override
   State<WelcomeUserScreen> createState() => _WelcomeUserScreenState();
@@ -28,11 +25,7 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => WelcomeUserBloc(
-        getIt<GetStartedUserInfoUseCase>(),
-        countryCode: widget.countryCode ?? '',
-        phoneNumber: widget.phoneNumber ?? '',
-      ),
+      create: (context) => WelcomeUserBloc(getIt<GetStartedUserInfoUseCase>()),
       child: Scaffold(
         backgroundColor: ColorManager.black,
         body: SafeArea(

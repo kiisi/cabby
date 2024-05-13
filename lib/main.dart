@@ -27,7 +27,12 @@ void main() async {
   // Stripe
   Stripe.publishableKey = Constant.stripePublishableKey;
 
-  initializeMapRenderer();
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
+  if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    mapsImplementation.useAndroidViewSurface = true;
+    initializeMapRenderer();
+  }
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -58,10 +63,11 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
       Completer<AndroidMapRenderer?>();
   _initializedRendererCompleter = completer;
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = true;
     unawaited(mapsImplementation
         .initializeWithRenderer(AndroidMapRenderer.latest)
         .then((AndroidMapRenderer initializedRenderer) =>

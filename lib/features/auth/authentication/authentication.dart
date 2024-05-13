@@ -1,4 +1,3 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cabby/app/di.dart';
 import 'package:cabby/core/common/custom_flushbar.dart';

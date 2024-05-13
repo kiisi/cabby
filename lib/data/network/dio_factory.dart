@@ -32,15 +32,21 @@ class DioFactory {
     // dio.interceptors.add(NetworkConnectivityInterceptor());
 
     dio.options = BaseOptions(
-        baseUrl: Constant.baseUrl,
-        connectTimeout: timeout,
-        receiveTimeout: timeout,
-        headers: headers);
+      baseUrl: Constant.baseUrl,
+      connectTimeout: timeout,
+      receiveTimeout: timeout,
+      headers: headers,
+    );
 
     if (kReleaseMode) {
     } else {
-      dio.interceptors.add(PrettyDioLogger(
-          requestBody: true, requestHeader: true, responseBody: true));
+      // dio.interceptors.add(PrettyDioLogger(
+      //   requestBody: true,
+      //   requestHeader: true,
+      //   responseBody: true,
+      //   error: true,
+      //   compact: true,
+      // ));
     }
 
     return dio;
