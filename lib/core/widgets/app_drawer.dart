@@ -1,9 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cabby/app/app_prefs.dart';
+import 'package:cabby/app/di.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
+  AppDrawer({super.key});
+
+  final AppPreferences _appPreference = getIt<AppPreferences>();
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class AppDrawer extends StatelessWidget {
         constraints: const BoxConstraints.expand(),
         child: ListView(
           children: [
-            _profileHeader(),
+            _profileHeader(context),
             _divider(),
             DrawerItem(
               icon: Icons.payment,
@@ -51,18 +55,16 @@ class AppDrawer extends StatelessWidget {
               onTap: () {},
               title: 'Become a driver',
             ),
-            DrawerItem(
-              icon: Icons.settings,
-              onTap: () {},
-              title: 'Settings',
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _profileHeader() {
+  Widget _profileHeader(BuildContext context) {
+    String username =
+        "${_appPreference.getUserFirstName()} ${_appPreference.getUserLastName()}";
+
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 0.0),
       width: double.infinity,
@@ -75,7 +77,9 @@ class AppDrawer extends StatelessWidget {
       ),
       child: Material(
         child: InkWell(
-          onTap: () {},
+          onTap: () async {
+            await context.router.pushNamed('/profile');
+          },
           child: Container(
             padding:
                 const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -92,9 +96,9 @@ class AppDrawer extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Destiny",
-                      style: TextStyle(
+                    Text(
+                      username,
+                      style: const TextStyle(
                           color: Color(0xFF34343A),
                           fontWeight: FontWeight.w900,
                           fontSize: 18),

@@ -7,6 +7,12 @@ const String prefsKeyAccessToken = "PREFS_KEY_ACCESS_TOKEN";
 const String prefsKeyLatitude = "PREFS_KEY_LATITUDE";
 const String prefsKeyLongitude = "PREFS_KEY_LONGITUDE";
 const String prefsKeyPaymentMethod = "PREFS_KEY_PAYMENT_METHOD";
+const String prefsKeyUserEmail = "PREFS_KEY_USER_EMAIL";
+const String prefsKeyUserPhoneNumber = "PREFS_KEY_USER_PHONE_NUMBER";
+const String prefsKeyUserCountryCode = "PREFS_KEY_USER_COUNTRY_CODE";
+const String prefsKeyUserFirstName = "PREFS_KEY_USER_FIRST_NAME";
+const String prefsKeyUserLastName = "PREFS_KEY_USER_LAST_NAME";
+const String prefsKeyUserGender = "PREFS_KEY_USER_GENDER";
 
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
@@ -52,5 +58,59 @@ class AppPreferences {
   String getPaymentMethod() {
     return _sharedPreferences.getString(prefsKeyPaymentMethod) ??
         PaymentMethods.cash;
+  }
+
+  Future<void> setUserEmail(String email) async {
+    _sharedPreferences.setString(prefsKeyUserEmail, email);
+  }
+
+  String getUserEmail() {
+    return _sharedPreferences.getString(prefsKeyUserEmail) ?? '';
+  }
+
+  Future<void> setUserPhoneNumber(int phoneNumber) async {
+    _sharedPreferences.setInt(prefsKeyUserPhoneNumber, phoneNumber);
+  }
+
+  int getUserPhoneNumber() {
+    return _sharedPreferences.getInt(prefsKeyUserPhoneNumber) ?? 0;
+  }
+
+  Future<void> setUserCountryCode(String countryCode) async {
+    _sharedPreferences.setString(prefsKeyUserPhoneNumber, countryCode);
+  }
+
+  String getUserCountryCode() {
+    return _sharedPreferences.getString(prefsKeyUserCountryCode) ?? '';
+  }
+
+  Future<void> setUserFirstName(String firstName) async {
+    _sharedPreferences.setString(prefsKeyUserFirstName, firstName);
+  }
+
+  String getUserFirstName() {
+    return _sharedPreferences.getString(prefsKeyUserFirstName) ?? '';
+  }
+
+  Future<void> setUserLastName(String lastName) async {
+    _sharedPreferences.setString(prefsKeyUserLastName, lastName);
+  }
+
+  String getUserLastName() {
+    return _sharedPreferences.getString(prefsKeyUserLastName) ?? '';
+  }
+
+  Future<void> setUserGender(String gender) async {
+    _sharedPreferences.setString(prefsKeyUserGender, gender);
+  }
+
+  String getUserGender() {
+    return _sharedPreferences.getString(prefsKeyUserGender) ?? '';
+  }
+
+  Future<void> logout() async {
+    await _sharedPreferences.clear();
+
+    await setOnBoardingScreenViewed();
   }
 }

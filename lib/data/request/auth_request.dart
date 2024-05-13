@@ -11,29 +11,35 @@ class GetStartedRequest {
 }
 
 class OtpVerifyRequest {
-  final String phoneNumber;
-  final String countryCode;
   final String otp;
+  final String email;
 
   OtpVerifyRequest({
-    required this.phoneNumber,
-    required this.countryCode,
     required this.otp,
+    required this.email,
   });
 }
 
 class GetStartedUserInfoRequest {
-  final String phoneNumber;
-  final String countryCode;
   final String firstName;
   final String lastName;
   final String gender;
+  final String email;
 
   GetStartedUserInfoRequest({
-    required this.phoneNumber,
-    required this.countryCode,
+    required this.email,
     required this.firstName,
     required this.lastName,
     required this.gender,
+  });
+}
+
+class EstimatedFareRequest {
+  final double distance;
+  final double duration;
+
+  EstimatedFareRequest({
+    required this.duration,
+    required this.distance,
   });
 }

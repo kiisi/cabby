@@ -54,3 +54,16 @@ class PlaceLocationDirectionUseCase
     return await _googleMapsRepository.placeLocationDirection(input);
   }
 }
+
+class PlaceLocationRouteUseCase
+    implements BaseUseCase<PlaceLocationRouteQuery, dynamic> {
+  final GoogleMapsRepository _googleMapsRepository;
+
+  PlaceLocationRouteUseCase(this._googleMapsRepository);
+
+  @override
+  Future<Either<Failure, dynamic>> execute(
+      PlaceLocationRouteQuery input) async {
+    return await _googleMapsRepository.placeLocationRoute(input);
+  }
+}

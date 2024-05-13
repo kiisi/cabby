@@ -32,9 +32,8 @@ class AuthenticationRemoteDataSourceImpl
   Future<AuthenticationResponse> otpVerifyRequest(
       OtpVerifyRequest otpVerifyRequest) async {
     return await _appServiceClient.otpVerify(
-      countryCode: otpVerifyRequest.countryCode,
-      phoneNumber: otpVerifyRequest.phoneNumber,
       otp: otpVerifyRequest.otp,
+      email: otpVerifyRequest.email,
     );
   }
 
@@ -42,11 +41,10 @@ class AuthenticationRemoteDataSourceImpl
   Future<AuthenticationResponse> getStartedUserInfo(
       GetStartedUserInfoRequest getStartedUserInfoRequest) async {
     return await _appServiceClient.getStartedUserInfo(
-      countryCode: getStartedUserInfoRequest.countryCode,
-      phoneNumber: getStartedUserInfoRequest.phoneNumber,
       firstName: getStartedUserInfoRequest.firstName,
       lastName: getStartedUserInfoRequest.lastName,
       gender: getStartedUserInfoRequest.gender,
+      email: getStartedUserInfoRequest.email,
     );
   }
 

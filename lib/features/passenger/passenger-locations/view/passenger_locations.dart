@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cabby/app/di.dart';
+import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
 import 'package:cabby/core/common/loading_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_locations_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 
@@ -25,17 +25,41 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
   final FocusNode _pickupLocationInputFocusNode = FocusNode();
   final FocusNode _destinationLocationInputFocusNode = FocusNode();
 
-  InputFocus _currentInputFocus = InputFocus.destination;
-
   final TextEditingController _pickupLocationTextEditingController =
       TextEditingController();
+
   final TextEditingController _destinationLocationTextEditingController =
       TextEditingController();
+
+  InputFocus _currentInputFocus = InputFocus.destination;
 
   @override
   void initState() {
     _pickupLocationInputFocusNode.addListener(onFocusChange);
     _destinationLocationInputFocusNode.addListener(onFocusChange);
+
+    _pickupLocationTextEditingController.text =
+        _passengerLocationsBloc.state.pickupLocation?.address ?? '';
+    _destinationLocationTextEditingController.text =
+        _passengerLocationsBloc.state.destinationLocation?.shortAddress ?? '';
+
+    _pickupLocationTextEditingController.addListener(() {
+      _passengerLocationsBloc.add(
+        LocationsInputUpdater(
+          input: _pickupLocationTextEditingController.text,
+          inputFocus: InputFocus.pickup,
+        ),
+      );
+    });
+
+    _destinationLocationTextEditingController.addListener(() {
+      _passengerLocationsBloc.add(
+        LocationsInputUpdater(
+          input: _destinationLocationTextEditingController.text,
+          inputFocus: InputFocus.destination,
+        ),
+      );
+    });
 
     super.initState();
   }
@@ -64,11 +88,7 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PassengerLocationsBloc, PassengerLocationsState>(
-      listener: (context, state) {
-        if (state.loadingStatus == LoadingStatus.done) {
-          context.router.pushNamed('/passenger-journey');
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -89,6 +109,22 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
               const SizedBox(
                 height: AppSize.s12,
               ),
+              state.locationDetailsLoadingStatus == LoadingStatus.loading
+                  ? ColorfulLinearProgressIndicator(
+                      minHeight: 2,
+                      colors: [
+                        ColorManager.primary,
+                        const Color(0xFFFD92B6),
+                      ],
+                      duration: const Duration(milliseconds: 500),
+                      initialColor: ColorManager.primary,
+                    )
+                  : const SizedBox(
+                      height: 2,
+                    ),
+              const SizedBox(
+                height: AppSize.s12,
+              ),
               _searchResultBox(context, state),
             ],
           ),
@@ -97,9 +133,7 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
     );
   }
 
-  Widget _pickupLocationInput(context, state) {
-    _pickupLocationTextEditingController.text =
-        state.pickupLocationInputText ?? '';
+  Widget _pickupLocationInput(context, PassengerLocationsState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSize.s14),
       child: TextFormField(
@@ -108,7 +142,7 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
         onChanged: (value) {
           _passengerLocationsBloc.add(
             LocationsInputUpdater(
-              input: _pickupLocationTextEditingController.text,
+              input: value,
               inputFocus: InputFocus.pickup,
             ),
           );
@@ -117,7 +151,7 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
               const Duration(milliseconds: 500), () {
             _passengerLocationsBloc.add(
               LocationAutoCompleteSearch(
-                input: _pickupLocationTextEditingController.text,
+                input: value,
                 inputFocus: InputFocus.pickup,
               ),
             );
@@ -133,6 +167,7 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
           suffixIcon: _currentInputFocus == InputFocus.pickup
               ? GestureDetector(
                   onTap: () {
+                    _pickupLocationTextEditingController.clear();
                     _passengerLocationsBloc
                         .add(PassengerLocationsPickupDiscard());
                   },
@@ -150,21 +185,13 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
     );
   }
 
-  Widget _destinationLocationInput(context, state) {
-    _destinationLocationTextEditingController.text =
-        state.destinationLocationInputText ?? '';
+  Widget _destinationLocationInput(context, PassengerLocationsState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSize.s14),
       child: TextFormField(
         autofocus: true,
         controller: _destinationLocationTextEditingController,
         onChanged: (value) {
-          _passengerLocationsBloc.add(
-            LocationsInputUpdater(
-              input: _destinationLocationTextEditingController.text,
-              inputFocus: InputFocus.destination,
-            ),
-          );
           EasyDebounce.debounce(
             'destination-location-input',
             const Duration(milliseconds: 500),
@@ -219,8 +246,10 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
           itemBuilder: (context, index) {
             return ListTile(
               onTap: () {
-                getLocationDetails(state,
-                    state.locationPredictionAutoComplete?[index]?.placeId);
+                getLocationDetails(
+                    state,
+                    state.locationPredictionAutoComplete?[index]?.placeId,
+                    context);
               },
               leading: Icon(
                 _getLocationIcon(
@@ -259,11 +288,13 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
     }
   }
 
-  void getLocationDetails(PassengerLocationsState state, String? placeId) {
+  void getLocationDetails(
+      PassengerLocationsState state, String? placeId, BuildContext context) {
     _passengerLocationsBloc.add(
       PassengerLocationDetails(
         placeId: placeId,
         inputFocus: _currentInputFocus,
+        context: context,
       ),
     );
   }

@@ -15,7 +15,7 @@ class UserDataResponse {
   @JsonKey(name: '_id')
   String? id;
   String? countryCode;
-  String? phoneNumber;
+  int? phoneNumber;
   String? firstName;
   String? lastName;
   String? gender;
@@ -49,12 +49,12 @@ class UserDataResponse {
 
 @JsonSerializable()
 class DataResponse {
-  @JsonKey(name: 'token')
-  String? token;
+  @JsonKey(name: 'accessToken')
+  String? accessToken;
   @JsonKey(name: 'user')
   UserDataResponse? user;
 
-  DataResponse({this.token, this.user});
+  DataResponse({this.accessToken, this.user});
   factory DataResponse.fromJson(Map<String, dynamic> json) =>
       _$DataResponseFromJson(json);
 

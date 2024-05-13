@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          drawer: const AppDrawer(),
+          drawer: AppDrawer(),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: Container(
             margin: const EdgeInsets.only(bottom: 80),

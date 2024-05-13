@@ -1,11 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cabby/app/di.dart';
 import 'package:cabby/core/common/loading_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
+import 'package:cabby/data/request/auth_request.dart';
 import 'package:cabby/domain/models/google_maps.dart';
 import 'package:cabby/domain/models/location_details.dart';
 import 'package:cabby/domain/models/location_direction.dart';
 import 'package:cabby/domain/usecases/google_maps_usecase.dart';
+import 'package:cabby/domain/usecases/passenger_usecase.dart';
 import 'package:cabby/features/passenger/passenger-locations/view/passenger_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -29,7 +32,15 @@ class PassengerLocationsBloc
   final PlaceLocationDirectionUseCase _placeLocationDirectionUseCase =
       getIt<PlaceLocationDirectionUseCase>();
 
-  PassengerLocationsBloc() : super(PassengerLocationsState()) {
+  final EstimatedFareUseCase _estimatedFareUseCase =
+      getIt<EstimatedFareUseCase>();
+
+  PassengerLocationsBloc()
+      : super(PassengerLocationsState(
+          estimatedFareLoadingStatus: LoadingStatus.idle,
+          extraLoadingStatus: LoadingStatus.idle,
+          locationDetailsLoadingStatus: LoadingStatus.idle,
+        )) {
     on<PassengerLocationsEvent>((event, emit) async {
       if (event is PassengerLocationsPickup) {
         (await _reverseGeoCodeUseCase.execute(
@@ -85,7 +96,8 @@ class PassengerLocationsBloc
           },
         );
       } else if (event is PassengerLocationDetails) {
-        emit(state.copyWith(loadingStatus: LoadingStatus.loading));
+        emit(state.copyWith(
+            locationDetailsLoadingStatus: LoadingStatus.loading));
         (await _placeLocationDetailsUseCase.execute(
           PlaceLocationDetailsQuery(
             placeId: event.placeId ?? '',
@@ -121,10 +133,26 @@ class PassengerLocationsBloc
                 ),
               );
             }
-            emit(state.copyWith(loadingStatus: LoadingStatus.done));
+            emit(state.copyWith(
+                locationDetailsLoadingStatus: LoadingStatus.done));
+            add(
+              PassengerLocationDirection(
+                origin: LatLng(state.pickupLocation?.latitude ?? 0,
+                    state.pickupLocation?.longitude ?? 0),
+                destination: LatLng(state.destinationLocation?.latitude ?? 0,
+                    state.destinationLocation?.longitude ?? 0),
+              ),
+            );
+
+            emit(state.copyWith(
+                estimatedFareLoadingStatus: LoadingStatus.loading));
+
+            AutoRouter.of(event.context).pushNamed('/passenger-journey');
           },
         );
       } else if (event is PassengerLocationDirection) {
+        emit(state.copyWith(extraLoadingStatus: LoadingStatus.loading));
+
         (await _placeLocationDirectionUseCase.execute(
           PlaceLocationDirectionQuery(
               destination:
@@ -137,10 +165,10 @@ class PassengerLocationsBloc
           },
           (success) {
             LocationDirection locationDirection = LocationDirection(
-                durationValue: success['routes'][0]['legs'][0]['duration']
-                    ['value'],
-                distanceValue: success['routes'][0]['legs'][0]['distance']
-                    ['value'],
+                durationValue:
+                    success['routes'][0]['legs'][0]['duration']['value'] + 0.0,
+                distanceValue:
+                    success['routes'][0]['legs'][0]['distance']['value'] + 0.0,
                 durationText: success['routes'][0]['legs'][0]['duration']
                     ['text'],
                 distanceText: success['routes'][0]['legs'][0]['distance']
@@ -175,18 +203,39 @@ class PassengerLocationsBloc
               polylineSet.add(polyline);
               emit(state.copyWith(polylineSet: polylineSet));
             }
+            emit(state.copyWith(extraLoadingStatus: LoadingStatus.done));
+            add(PassengerLocationsEstimatedFare());
           },
         );
-      } else if (event is PassengerLoadingStatusIdle) {
-        emit(
-          state.copyWith(loadingStatus: LoadingStatus.idle),
-        );
       } else if (event is PassengerLocationsPickupDiscard) {
-        emit(state.copyWith(
-            pickupLocation: null, pickupLocationInputText: null));
+        emit(state.copyWithPickupLocationSetToNull());
       } else if (event is PassengerLocationsDestinationDiscard) {
-        emit(state.copyWith(
-            destinationLocation: null, destinationLocationInputText: null));
+        emit(state.copyWithDestinationLocationSetToNull());
+      } else if (event is PassengerLocationsEstimatedFare) {
+        emit(state.copyWith(estimatedFareLoadingStatus: LoadingStatus.loading));
+        (await _estimatedFareUseCase.execute(
+          EstimatedFareRequest(
+            distance: state.locationDirection?.distanceValue ?? 0,
+            duration: state.locationDirection?.durationValue ?? 0,
+          ),
+        ))
+            .fold(
+          (failure) {
+            print("Failure Message ${failure}");
+            print("Failure Message ${failure.message}");
+          },
+          (success) {
+            print('==========&&&&&&&&&&&&==========');
+            print(success['data']['fare']);
+            emit(
+              state.copyWith(
+                estimatedFareValue: success['data']['fare'],
+                estimatedFareCurrency: success['data']['currency'],
+              ),
+            );
+          },
+        );
+        emit(state.copyWith(estimatedFareLoadingStatus: LoadingStatus.done));
       }
     });
   }

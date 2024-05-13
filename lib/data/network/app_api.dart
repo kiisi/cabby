@@ -18,15 +18,13 @@ abstract class AppServiceClient {
 
   @POST('/auth/otp-verify')
   Future<AuthenticationResponse> otpVerify({
-    @Field("countryCode") required String countryCode,
-    @Field("phoneNumber") required String phoneNumber,
     @Field("otp") required String otp,
+    @Field("email") required String email,
   });
 
   @POST('/auth/get-started/user-info')
   Future<AuthenticationResponse> getStartedUserInfo({
-    @Field("countryCode") required String countryCode,
-    @Field("phoneNumber") required String phoneNumber,
+    @Field("email") required String email,
     @Field("firstName") required String firstName,
     @Field("lastName") required String lastName,
     @Field("gender") required String gender,
@@ -34,6 +32,12 @@ abstract class AppServiceClient {
 
   @GET('/auth/user-auth')
   Future<AuthenticationResponse> userAuth();
+
+  @GET('/passenger/estimated-fare')
+  Future<dynamic> estimatedFare({
+    @Query("distance") required double distance,
+    @Query("duration") required double duration,
+  });
 }
 
 @RestApi(baseUrl: Constant.googleMapBaseUrl)
@@ -42,24 +46,40 @@ abstract class GoogleMapsServiceClient {
       _GoogleMapsServiceClient;
 
   @GET('/geocode/json')
+  @Headers(<String, dynamic>{
+    'X-Android-Package': 'com.cabby.app',
+    'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+  })
   Future<dynamic> reverseGeoCode({
     @Query("latlng") required String latlng,
     @Query("key") String key = Constant.googleMapApiKey,
   });
 
   @GET('/place/autocomplete/json')
+  @Headers(<String, dynamic>{
+    'X-Android-Package': 'com.cabby.app',
+    'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+  })
   Future<dynamic> autoCompleteSearch({
     @Query("input") required String input,
     @Query("key") String key = Constant.googleMapApiKey,
   });
 
   @GET('/place/details/json')
+  @Headers(<String, dynamic>{
+    'X-Android-Package': 'com.cabby.app',
+    'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+  })
   Future<dynamic> placeLocationDetails({
     @Query("place_id") required String placeId,
     @Query("key") String key = Constant.googleMapApiKey,
   });
 
   @GET('/directions/json')
+  @Headers(<String, dynamic>{
+    'X-Android-Package': 'com.cabby.app',
+    'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+  })
   Future<dynamic> placeLocationDirection({
     @Query("destination") required String destination,
     @Query("origin") required String origin,
@@ -67,21 +87,21 @@ abstract class GoogleMapsServiceClient {
   });
 }
 
-@RestApi(baseUrl: Constant.googleMapBaseUrl)
+@RestApi(baseUrl: Constant.googleMapRouteBaseUrl)
 abstract class GoogleMapsRouteServiceClient {
   factory GoogleMapsRouteServiceClient(Dio dio, {String baseUrl}) =
       _GoogleMapsRouteServiceClient;
 
-  @POST('/geocode/json')
+  @POST('')
   @Headers(<String, dynamic>{
     'Content-Type': 'application/json',
     'X-Goog-Api-Key': Constant.googleMapApiKey,
     'X-Goog-FieldMask':
-        'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+        'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.travelAdvisory.tollInfo'
   })
   Future<dynamic> getRoute({
-    @Field("origin") required dynamic origin,
-    @Field("destination") required dynamic destination,
+    @Field("origin") required Map<String, dynamic> origin,
+    @Field("destination") required Map<String, dynamic> destination,
     @Field("travelMode") String travelMode = "DRIVE",
     @Field("routingPreference") String routingPreference = "TRAFFIC_AWARE",
     @Field("computeAlternativeRoutes") bool computeAlternativeRoutes = false,

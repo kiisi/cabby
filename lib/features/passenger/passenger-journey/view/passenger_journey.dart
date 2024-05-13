@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+import 'package:intl/intl.dart';
+
 import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/app/di.dart';
+import 'package:cabby/core/common/loading_status.dart';
+import 'package:cabby/core/common/shimmer.dart';
 import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/core/widgets/button.dart';
 import 'package:cabby/domain/models/payment_methods.dart';
@@ -9,8 +14,10 @@ import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_loca
 import 'package:cabby/features/passenger/payment/bloc/payment_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:ui' as ui;
 
 @RoutePage()
 class PassengerJourneyScreen extends StatefulWidget {
@@ -22,6 +29,8 @@ class PassengerJourneyScreen extends StatefulWidget {
 
 class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
   GoogleMapController? controller;
+
+  final GlobalKey key = GlobalKey();
 
   final AppPreferences _appPreferences = getIt<AppPreferences>();
 
@@ -42,39 +51,37 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
 
   @override
   void initState() {
-    _passengerLocationsBloc.add(PassengerLoadingStatusIdle());
     var state = _passengerLocationsBloc.state;
-    _passengerLocationsBloc.add(
-      PassengerLocationDirection(
-        origin: LatLng(state.pickupLocation?.latitude ?? 0,
-            state.pickupLocation?.longitude ?? 0),
-        destination: LatLng(state.destinationLocation?.latitude ?? 0,
-            state.destinationLocation?.longitude ?? 0),
-      ),
-    );
+
+    print('==============******************=================');
+    print(state.extraLoadingStatus);
+    print(state.pickupLocation?.latitude);
+    print(state.destinationLocation?.latitude);
+    print('==============******************=================');
 
     /// origin marker
-    _addMarker(
-        LatLng(state.pickupLocation?.latitude ?? 0,
-            state.pickupLocation?.longitude ?? 0),
-        "origin",
-        BitmapDescriptor.defaultMarker);
+    // _addMarker(
+    //     LatLng(state.pickupLocation?.latitude ?? 0,
+    //         state.pickupLocation?.longitude ?? 0),
+    //     "origin",
+    //     BitmapDescriptor.defaultMarker);
 
     /// destination marker
-    _addMarker(
-        LatLng(state.destinationLocation?.latitude ?? 0,
-            state.destinationLocation?.longitude ?? 0),
-        "destination",
-        BitmapDescriptor.defaultMarkerWithHue(90));
+    // _addMarker(
+    //     LatLng(state.destinationLocation?.latitude ?? 0,
+    //         state.destinationLocation?.longitude ?? 0),
+    //     "destination",
+    //     BitmapDescriptor.defaultMarkerWithHue(90));
     super.initState();
   }
 
-  _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
-    MarkerId markerId = MarkerId(id);
-    Marker marker =
-        Marker(markerId: markerId, icon: descriptor, position: position);
-    markers[markerId] = marker;
-  }
+  // _addMarker(LatLng position, String id, BitmapDescriptor descriptor) async {
+  //   MarkerId markerId = MarkerId(id);
+
+  //   Marker marker =
+  //       Marker(markerId: markerId, icon: descriptor, position: position);
+  //   markers[markerId] = marker;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +173,7 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                           children: [
                             IconButton(
                               onPressed: () {
-                                context.router.pop();
+                                context.router.maybePop();
                               },
                               icon: const Icon(Icons.arrow_back),
                             ),
@@ -216,6 +223,14 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
   }
 
   Widget _confirmationBottomSheet(PassengerLocationsState state) {
+    NumberFormat formatter = NumberFormat("#,##0", "en_US");
+
+    // Formatting the amount
+    String estimatedFare = state.estimatedFareValue != null
+        ? formatter.format(state.estimatedFareValue)
+        : '';
+    String currency = state.estimatedFareCurrency ?? '';
+
     return BottomSheet(
       enableDrag: false,
       onClosing: () {},
@@ -246,21 +261,27 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                   const SizedBox(
                     height: AppSize.s6,
                   ),
-                  RichText(
-                    text: const TextSpan(
-                      text: 'Cabby  ',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: AppSize.s12,
-                          fontWeight: FontWeight.w300),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: '₦3,000',
-                          style: TextStyle(fontWeight: FontWeight.w400),
+                  state.estimatedFareLoadingStatus == LoadingStatus.loading
+                      ? const ShimmerLoadingAnimation(
+                          height: 14,
+                        )
+                      : RichText(
+                          text: TextSpan(
+                            text: 'Cabby  ',
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: AppSize.s12,
+                                fontWeight: FontWeight.w300),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text:
+                                    '${currency.toUpperCase()} $estimatedFare',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(
                     height: AppSize.s10,
                   ),
@@ -268,31 +289,33 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                   const SizedBox(
                     height: AppSize.s10,
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: 40,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color(0xffE3F5FF),
-                    ),
-                    child: const Row(children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: Color(0xff4783C2),
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      Text(
-                        'Travel time: ~25min.',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontFamily: 'Oceanwide',
+                  state.extraLoadingStatus == LoadingStatus.loading
+                      ? const ShimmerLoadingAnimation()
+                      : Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          height: 40,
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            color: Color(0xffE3F5FF),
+                          ),
+                          child: Row(children: [
+                            const Icon(
+                              Icons.info_outline,
+                              color: Color(0xff4783C2),
+                            ),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            Text(
+                              'Travel time: ~${state.locationDirection?.durationText ?? ""}.',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontFamily: 'Oceanwide',
+                              ),
+                            ),
+                          ]),
                         ),
-                      ),
-                    ]),
-                  ),
                   const SizedBox(
                     height: AppSize.s10,
                   ),

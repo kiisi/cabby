@@ -26,7 +26,7 @@ class _AppServiceClient implements AppServiceClient {
     required String phoneNumber,
     required String email,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -57,17 +57,15 @@ class _AppServiceClient implements AppServiceClient {
 
   @override
   Future<AuthenticationResponse> otpVerify({
-    required String countryCode,
-    required String phoneNumber,
     required String otp,
+    required String email,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
-      'countryCode': countryCode,
-      'phoneNumber': phoneNumber,
       'otp': otp,
+      'email': email,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<AuthenticationResponse>(Options(
@@ -92,18 +90,16 @@ class _AppServiceClient implements AppServiceClient {
 
   @override
   Future<AuthenticationResponse> getStartedUserInfo({
-    required String countryCode,
-    required String phoneNumber,
+    required String email,
     required String firstName,
     required String lastName,
     required String gender,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
-      'countryCode': countryCode,
-      'phoneNumber': phoneNumber,
+      'email': email,
       'firstName': firstName,
       'lastName': lastName,
       'gender': gender,
@@ -131,10 +127,10 @@ class _AppServiceClient implements AppServiceClient {
 
   @override
   Future<AuthenticationResponse> userAuth() async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<AuthenticationResponse>(Options(
       method: 'GET',
@@ -153,6 +149,38 @@ class _AppServiceClient implements AppServiceClient {
               baseUrl,
             ))));
     final value = AuthenticationResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<dynamic> estimatedFare({
+    required double distance,
+    required double duration,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'distance': distance,
+      r'duration': duration,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/passenger/estimated-fare',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+    final value = _result.data;
     return value;
   }
 
@@ -206,13 +234,17 @@ class _GoogleMapsServiceClient implements GoogleMapsServiceClient {
     required String latlng,
     String key = Constant.googleMapApiKey,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'latlng': latlng,
       r'key': key,
     };
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _headers = <String, dynamic>{
+      r'X-Android-Package': 'com.cabby.app',
+      r'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+    };
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -238,13 +270,17 @@ class _GoogleMapsServiceClient implements GoogleMapsServiceClient {
     required String input,
     String key = Constant.googleMapApiKey,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'input': input,
       r'key': key,
     };
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _headers = <String, dynamic>{
+      r'X-Android-Package': 'com.cabby.app',
+      r'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+    };
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -270,13 +306,17 @@ class _GoogleMapsServiceClient implements GoogleMapsServiceClient {
     required String placeId,
     String key = Constant.googleMapApiKey,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'place_id': placeId,
       r'key': key,
     };
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _headers = <String, dynamic>{
+      r'X-Android-Package': 'com.cabby.app',
+      r'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+    };
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -303,14 +343,18 @@ class _GoogleMapsServiceClient implements GoogleMapsServiceClient {
     required String origin,
     String key = Constant.googleMapApiKey,
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'destination': destination,
       r'origin': origin,
       r'key': key,
     };
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _headers = <String, dynamic>{
+      r'X-Android-Package': 'com.cabby.app',
+      r'X-Android-Cert': 'BD04FF355619EB922F25D2A37E171C6D327E3E38',
+    };
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch(_setStreamType<dynamic>(Options(
       method: 'GET',
       headers: _headers,
@@ -369,7 +413,7 @@ class _GoogleMapsRouteServiceClient implements GoogleMapsRouteServiceClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://maps.googleapis.com/maps/api';
+    baseUrl ??= 'https://routes.googleapis.com/directions/v2:computeRoutes';
   }
 
   final Dio _dio;
@@ -378,8 +422,8 @@ class _GoogleMapsRouteServiceClient implements GoogleMapsRouteServiceClient {
 
   @override
   Future<dynamic> getRoute({
-    required dynamic origin,
-    required dynamic destination,
+    required Map<String, dynamic> origin,
+    required Map<String, dynamic> destination,
     String travelMode = "DRIVE",
     String routingPreference = "TRAFFIC_AWARE",
     bool computeAlternativeRoutes = false,
@@ -390,13 +434,13 @@ class _GoogleMapsRouteServiceClient implements GoogleMapsRouteServiceClient {
     },
     String languageCode = "en-US",
   }) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{
       r'Content-Type': 'application/json',
       r'X-Goog-Api-Key': 'AIzaSyCtm3sRh1A-rbIawxq5bdv7NDFDlMoze0c',
       r'X-Goog-FieldMask':
-          'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline',
+          'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.travelAdvisory.tollInfo',
     };
     _headers.removeWhere((k, v) => v == null);
     final _data = {
@@ -416,7 +460,7 @@ class _GoogleMapsRouteServiceClient implements GoogleMapsRouteServiceClient {
     )
         .compose(
           _dio.options,
-          '/geocode/json',
+          '',
           queryParameters: queryParameters,
           data: _data,
         )

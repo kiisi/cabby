@@ -20,7 +20,7 @@ UserDataResponse _$UserDataResponseFromJson(Map<String, dynamic> json) =>
     UserDataResponse(
       id: json['_id'] as String?,
       countryCode: json['countryCode'] as String?,
-      phoneNumber: json['phoneNumber'] as String?,
+      phoneNumber: json['phoneNumber'] as int?,
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       gender: json['gender'] as String?,
@@ -49,7 +49,7 @@ Map<String, dynamic> _$UserDataResponseToJson(UserDataResponse instance) =>
     };
 
 DataResponse _$DataResponseFromJson(Map<String, dynamic> json) => DataResponse(
-      token: json['token'] as String?,
+      accessToken: json['accessToken'] as String?,
       user: json['user'] == null
           ? null
           : UserDataResponse.fromJson(json['user'] as Map<String, dynamic>),
@@ -57,7 +57,7 @@ DataResponse _$DataResponseFromJson(Map<String, dynamic> json) => DataResponse(
 
 Map<String, dynamic> _$DataResponseToJson(DataResponse instance) =>
     <String, dynamic>{
-      'token': instance.token,
+      'accessToken': instance.accessToken,
       'user': instance.user,
     };
 

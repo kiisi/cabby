@@ -11,12 +11,18 @@ abstract interface class GoogleMapsRemoteDataSource {
 
   Future<dynamic> placeLocationDirection(
       PlaceLocationDirectionQuery placeLocationDirectionQuery);
+
+  Future<dynamic> placeLocationRoute(
+      PlaceLocationRouteQuery placeLocationRouteQuery);
 }
 
 class GoogleMapsRemoteDataSourceImpl implements GoogleMapsRemoteDataSource {
   final GoogleMapsServiceClient _googleMapsServiceClient;
 
-  GoogleMapsRemoteDataSourceImpl(this._googleMapsServiceClient);
+  final GoogleMapsRouteServiceClient _googleMapsRouteServiceClient;
+
+  GoogleMapsRemoteDataSourceImpl(
+      this._googleMapsServiceClient, this._googleMapsRouteServiceClient);
 
   @override
   Future<dynamic> reverseGeoCode(
@@ -48,6 +54,29 @@ class GoogleMapsRemoteDataSourceImpl implements GoogleMapsRemoteDataSource {
     return await _googleMapsServiceClient.placeLocationDirection(
       destination: placeLocationDirectionQuery.destination,
       origin: placeLocationDirectionQuery.origin,
+    );
+  }
+
+  @override
+  Future placeLocationRoute(
+      PlaceLocationRouteQuery placeLocationRouteQuery) async {
+    return await _googleMapsRouteServiceClient.getRoute(
+      destination: {
+        "location": {
+          "latLng": {
+            "latitude": placeLocationRouteQuery.destination.latitude,
+            "longitude": placeLocationRouteQuery.destination.longitude
+          }
+        }
+      },
+      origin: {
+        "location": {
+          "latLng": {
+            "latitude": placeLocationRouteQuery.origin.latitude,
+            "longitude": placeLocationRouteQuery.origin.longitude
+          }
+        }
+      },
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 class ReverseGeoCodeQuery {
   final String latlng;
 
@@ -22,4 +24,23 @@ class PlaceLocationDirectionQuery {
 
   PlaceLocationDirectionQuery(
       {required this.destination, required this.origin});
+}
+
+class OriginPlaceId {
+  final String placeId;
+
+  OriginPlaceId({required this.placeId});
+}
+
+class DestinationPlaceId {
+  final String placeId;
+
+  DestinationPlaceId({required this.placeId});
+}
+
+class PlaceLocationRouteQuery {
+  final LatLng destination;
+  final LatLng origin;
+
+  PlaceLocationRouteQuery({required this.destination, required this.origin});
 }
