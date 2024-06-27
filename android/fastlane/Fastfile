@@ -13,6 +13,9 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+require 'dotenv'
+Dotenv.load
+
 default_platform(:android)
 
 platform :android do
@@ -33,6 +36,11 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean assembleRelease")
-    upload_to_play_store
+     # Reference the JSON key file using the environment variable
+     json_key_path = ENV['GOOGLE_PLAY_JSON_KEY']
+    upload_to_play_store(
+      track: 'production',
+      json_key: json_key_path
+    )
   end
 end
