@@ -51,7 +51,7 @@ dependencies:
   image_picker: ^1.0.4
   auto_route: ^8.0.3
   google_fonts: ^6.2.1
-  fl_country_code_picker: ^0.1.7+1
+  fl_country_code_picker: ^0.1.9+1
   sms_autofill: ^2.3.0
   flutter_bloc: ^8.1.5
   bloc: ^8.1.4
@@ -70,7 +70,7 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.6.0
   change_app_package_name: ^1.1.0
   colorful_progress_indicators: ^1.0.2
-  intl: ^0.18.1
+  intl: 0.19.0
   
 
 dev_dependencies:

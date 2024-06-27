@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cabby/core/common/marker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cabby/app/app_prefs.dart';
@@ -14,7 +15,6 @@ import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_loca
 import 'package:cabby/features/passenger/payment/bloc/payment_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
@@ -32,9 +32,11 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
 
   final GlobalKey key = GlobalKey();
 
+  BitmapDescriptor? customMarker;
+
   final AppPreferences _appPreferences = getIt<AppPreferences>();
 
-  Map<MarkerId, Marker> markers = {};
+  List<Marker> markers = [];
 
   final PassengerLocationsBloc _passengerLocationsBloc =
       getIt<PassengerLocationsBloc>();
@@ -49,39 +51,47 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
     return _appPreferences.getPaymentMethod();
   }
 
+  GlobalKey markerKey = GlobalKey();
+
   @override
   void initState() {
+    super.initState();
+
     var state = _passengerLocationsBloc.state;
 
-    print('==============******************=================');
-    print(state.extraLoadingStatus);
-    print(state.pickupLocation?.latitude);
-    print(state.destinationLocation?.latitude);
-    print('==============******************=================');
+    List<City> cities = [
+      City(
+          "Pickup",
+          LatLng(
+              state.pickupLocation!.latitude, state.pickupLocation!.longitude)),
+      City(
+          "Destination",
+          LatLng(state.destinationLocation!.latitude,
+              state.destinationLocation!.longitude)),
+    ];
 
-    /// origin marker
-    // _addMarker(
-    //     LatLng(state.pickupLocation?.latitude ?? 0,
-    //         state.pickupLocation?.longitude ?? 0),
-    //     "origin",
-    //     BitmapDescriptor.defaultMarker);
+    List<Widget> markerWidgets() {
+      return cities.map((c) => _getMarkerWidget(c.name)).toList();
+    }
 
-    /// destination marker
-    // _addMarker(
-    //     LatLng(state.destinationLocation?.latitude ?? 0,
-    //         state.destinationLocation?.longitude ?? 0),
-    //     "destination",
-    //     BitmapDescriptor.defaultMarkerWithHue(90));
-    super.initState();
+    List<Marker> mapBitmapsToMarkers(List<Uint8List> bitmaps) {
+      List<Marker> markersList = [];
+      bitmaps.asMap().forEach((i, bmp) {
+        final city = cities[i];
+        markersList.add(Marker(
+            markerId: MarkerId(city.name),
+            position: city.position,
+            icon: BitmapDescriptor.fromBytes(bmp)));
+      });
+      return markersList;
+    }
+
+    MarkerGenerator(markerWidgets(), (bitmaps) {
+      setState(() {
+        markers = mapBitmapsToMarkers(bitmaps);
+      });
+    }).generate(context);
   }
-
-  // _addMarker(LatLng position, String id, BitmapDescriptor descriptor) async {
-  //   MarkerId markerId = MarkerId(id);
-
-  //   Marker marker =
-  //       Marker(markerId: markerId, icon: descriptor, position: position);
-  //   markers[markerId] = marker;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +138,7 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                 southWestLong,
               ),
             ),
-            40.0,
+            60.0,
           ),
         );
         return BlocBuilder<LocationServiceBloc, LocationServiceState>(
@@ -144,7 +154,7 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                   GoogleMap(
                     zoomControlsEnabled: false,
                     polylines: state.polylineSet,
-                    markers: Set<Marker>.of(markers.values),
+                    markers: markers.toSet(),
                     initialCameraPosition: CameraPosition(
                       target: LatLng(
                         state.destinationLocation?.latitude ??
@@ -154,7 +164,7 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                             state.pickupLocation?.longitude ??
                             _appPreferences.getLongitude(),
                       ),
-                      zoom: 18,
+                      zoom: 16,
                     ),
                     myLocationButtonEnabled: false,
                     onMapCreated: _onMapCreated,
@@ -371,4 +381,38 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
       },
     );
   }
+}
+
+Widget _getMarkerWidget(String name) {
+  return Container(
+    padding: const EdgeInsets.all(5),
+    width: 30,
+    height: 30,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(100),
+      color: Colors.white,
+    ),
+    child: Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        color: const Color(0xFF6572FF),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: Colors.white,
+        ),
+      ),
+    ),
+  );
+}
+
+// Example of backing data
+
+class City {
+  final String name;
+  final LatLng position;
+
+  City(this.name, this.position);
 }

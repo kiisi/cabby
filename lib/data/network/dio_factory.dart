@@ -40,13 +40,13 @@ class DioFactory {
 
     if (kReleaseMode) {
     } else {
-      // dio.interceptors.add(PrettyDioLogger(
-      //   requestBody: true,
-      //   requestHeader: true,
-      //   responseBody: true,
-      //   error: true,
-      //   compact: true,
-      // ));
+      dio.interceptors.add(PrettyDioLogger(
+        requestBody: true,
+        requestHeader: true,
+        responseBody: true,
+        error: true,
+        compact: true,
+      ));
     }
 
     return dio;

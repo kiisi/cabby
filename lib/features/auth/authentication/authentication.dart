@@ -163,7 +163,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       ),
                     ),
                     const SizedBox(
-                      width: AppSize.s6,
+                      width: AppSize.s5,
                     ),
                     Text(
                       selectedCountry!.dialCode,
