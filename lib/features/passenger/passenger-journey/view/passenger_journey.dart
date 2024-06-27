@@ -138,7 +138,7 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                 southWestLong,
               ),
             ),
-            40.0,
+            60.0,
           ),
         );
         return BlocBuilder<LocationServiceBloc, LocationServiceState>(
@@ -164,7 +164,7 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                             state.pickupLocation?.longitude ??
                             _appPreferences.getLongitude(),
                       ),
-                      zoom: 18,
+                      zoom: 16,
                     ),
                     myLocationButtonEnabled: false,
                     onMapCreated: _onMapCreated,

@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Text(
                           'Find a Cab',
                           style: TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.bold),
+                              fontSize: 16.0, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],

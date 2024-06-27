@@ -7,34 +7,28 @@ class Button extends ElevatedButton {
   final double? borderRadius;
 
   Button({
-    Key? key,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
+    super.key,
+    required super.onPressed,
+    super.onLongPress,
     ButtonStyle? style,
-    FocusNode? focusNode,
-    bool autofocus = false,
-    Clip clipBehavior = Clip.none,
+    super.focusNode,
+    super.autofocus,
+    super.clipBehavior,
     EdgeInsetsGeometry? padding,
     Widget? child,
     this.loading = false,
     this.borderRadius = AppSize.s10,
   }) : super(
-          key: key,
-          onPressed: onPressed,
-          onLongPress: onLongPress,
           style: ElevatedButton.styleFrom(
             fixedSize: const Size.fromHeight(AppSize.s54),
             disabledBackgroundColor: Colors.blue,
-            disabledForegroundColor: ColorManager.whiteSmoke,
+            disabledForegroundColor: ColorManager.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? AppSize.s10),
             ),
             backgroundColor: Colors.blue,
             foregroundColor: ColorManager.white,
           ),
-          focusNode: focusNode,
-          autofocus: autofocus,
-          clipBehavior: clipBehavior,
           child: loading
               ? SizedBox(
                   height: 24,
