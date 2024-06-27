@@ -41,3 +41,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/cabby-414207-f1be6bcc80ca.json
