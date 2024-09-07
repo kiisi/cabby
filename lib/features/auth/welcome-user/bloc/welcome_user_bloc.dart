@@ -23,6 +23,14 @@ class WelcomeUserBloc extends Bloc<WelcomeUserEvent, WelcomeUserState> {
       } else if (event is WelcomeUserSetGender) {
         emit(state.copyWith(
             gender: event.gender, formStatus: const FormInitialStatus()));
+      } else if (event is WelcomeUserSetCountryCode) {
+        emit(state.copyWith(
+            countryCode: event.countryCode,
+            formStatus: const FormInitialStatus()));
+      } else if (event is WelcomeUserSetPhoneNumber) {
+        emit(state.copyWith(
+            phoneNumber: event.phoneNumber,
+            formStatus: const FormInitialStatus()));
       } else if (event is WelcomeUserSubmission) {
         emit(state.copyWith(formStatus: FormSubmitting()));
         (await _getStartedUserInfoUseCase.execute(
@@ -31,6 +39,8 @@ class WelcomeUserBloc extends Bloc<WelcomeUserEvent, WelcomeUserState> {
             lastName: state.lastName ?? '',
             gender: state.gender ?? '',
             email: _appPreferences.getUserEmail(),
+            countryCode: state.countryCode ?? '',
+            phoneNumber: state.phoneNumber ?? '',
           ),
         ))
             .fold((failure) {
@@ -48,6 +58,10 @@ class WelcomeUserBloc extends Bloc<WelcomeUserEvent, WelcomeUserState> {
           _appPreferences.setUserFirstName(success.data?.user?.firstName ?? '');
           _appPreferences.setUserLastName(success.data?.user?.lastName ?? '');
           _appPreferences.setUserGender(success.data?.user?.gender ?? '');
+          _appPreferences
+              .setUserCountryCode(success.data?.user?.countryCode ?? '');
+          _appPreferences.setUserPhoneNumber(
+              success.data?.user?.phoneNumber?.toInt() ?? 0);
 
           emit(
             state.copyWith(

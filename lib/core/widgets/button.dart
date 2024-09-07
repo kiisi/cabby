@@ -20,7 +20,7 @@ class Button extends ElevatedButton {
     this.borderRadius = AppSize.s10,
   }) : super(
           style: ElevatedButton.styleFrom(
-            fixedSize: const Size.fromHeight(AppSize.s54),
+            fixedSize: const Size.fromHeight(AppSize.s50),
             disabledBackgroundColor: Colors.blue,
             disabledForegroundColor: ColorManager.white,
             shape: RoundedRectangleBorder(

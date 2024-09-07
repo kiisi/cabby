@@ -36,14 +36,17 @@ class _LoadingIndicatorScreenState extends State<LoadingIndicatorScreen> {
     if (isOnBoardingScreenViewed) {
       (await _userAuthUseCase.execute(null)).fold(
         (failure) {
-          print("====Failure Error =====");
-          print("Failure ${failure.statusCode}");
-          print("Failure Message ${failure.message}");
           context.router.replaceAll([const AuthenticationRoute()]);
         },
         (success) => {
-          print('Success $success'),
-          context.router.replaceAll([const HomeRoute()])
+          if (success.data?.user?.isProfileComplete == true)
+            {
+              context.router.replaceAll([const HomeRoute()])
+            }
+          else
+            {
+              context.router.replaceAll([const WelcomeUserRoute()])
+            }
         },
       );
     } else {

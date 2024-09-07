@@ -19,7 +19,6 @@ class AuthenticationBloc
     on<AuthenticationEvent>((event, emit) async {
       if (event is AuthenticationSetPhoneNumber) {
         emit(state.copyWith(
-          phoneNumber: event.phoneNumber,
           formStatus: const FormInitialStatus(),
         ));
       } else if (event is AuthenticationSetEmail) {
@@ -29,7 +28,6 @@ class AuthenticationBloc
         ));
       } else if (event is AuthenticationSetCountryCode) {
         emit(state.copyWith(
-          countryCode: event.countryCode,
           formStatus: const FormInitialStatus(),
         ));
       } else if (event is AuthenticationSubmission) {
@@ -38,14 +36,10 @@ class AuthenticationBloc
         ));
 
         _appPreferences.setUserEmail(state.email ?? '');
-        _appPreferences.setUserPhoneNumber(int.parse(state.phoneNumber ?? '0'));
-        _appPreferences.setUserCountryCode(state.countryCode);
 
         (await _getStartedUseCase.execute(
           GetStartedRequest(
-            countryCode: state.countryCode,
             email: state.email ?? '',
-            phoneNumber: state.phoneNumber ?? '',
           ),
         ))
             .fold(

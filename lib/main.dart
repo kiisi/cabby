@@ -7,6 +7,8 @@ import 'package:cabby/core/resources/theme_manager.dart';
 import 'package:cabby/core/routes/app_router.dart';
 import 'package:cabby/core/services/location_service.dart';
 import 'package:cabby/features/auth/authentication/bloc/authentication_bloc.dart';
+import 'package:cabby/features/auth/otp-verification/bloc/otp_verification_bloc.dart';
+import 'package:cabby/features/auth/welcome-user/bloc/welcome_user_bloc.dart';
 import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_locations_bloc.dart';
 import 'package:cabby/features/passenger/payment/bloc/payment_bloc.dart';
@@ -155,6 +157,12 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider<AuthenticationBloc>(
           create: (BuildContext context) => getIt<AuthenticationBloc>(),
+        ),
+        BlocProvider<OtpVerificationBloc>(
+          create: (BuildContext context) => getIt<OtpVerificationBloc>(),
+        ),
+        BlocProvider<WelcomeUserBloc>(
+          create: (BuildContext context) => getIt<WelcomeUserBloc>(),
         ),
       ],
       child: MaterialApp.router(

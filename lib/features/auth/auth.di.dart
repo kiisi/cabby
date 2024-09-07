@@ -4,12 +4,15 @@ import 'package:cabby/data/repository/auth_repository.dart';
 import 'package:cabby/domain/usecases/auth_usecase.dart';
 import 'package:cabby/features/auth/authentication/bloc/authentication_bloc.dart';
 import 'package:cabby/features/auth/otp-verification/bloc/otp_verification_bloc.dart';
+import 'package:cabby/features/auth/welcome-user/bloc/welcome_user_bloc.dart';
 
 void authDependencyInjection() {
   getIt.registerLazySingleton<AuthenticationBloc>(() => AuthenticationBloc());
 
   getIt.registerLazySingleton<OtpVerificationBloc>(
       () => OtpVerificationBloc(getIt()));
+
+  getIt.registerLazySingleton<WelcomeUserBloc>(() => WelcomeUserBloc(getIt()));
 
   getIt.registerLazySingleton<GetStartedUseCase>(
       () => GetStartedUseCase(getIt()));

@@ -20,7 +20,7 @@ UserDataResponse _$UserDataResponseFromJson(Map<String, dynamic> json) =>
     UserDataResponse(
       id: json['_id'] as String?,
       countryCode: json['countryCode'] as String?,
-      phoneNumber: json['phoneNumber'] as int?,
+      phoneNumber: (json['phoneNumber'] as num?)?.toInt(),
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       gender: json['gender'] as String?,

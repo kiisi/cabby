@@ -4,21 +4,16 @@ class WelcomeUserState {
   final String? firstName;
   final String? lastName;
   final String? gender;
+  final String? countryCode;
+  final String? phoneNumber;
   final FormSubmissionStatus formStatus;
-
-  String? get firstNameErrorText =>
-      firstName != null && firstName!.isEmpty ? "First name is required" : null;
-
-  String? get lastNameErrorText =>
-      lastName != null && lastName!.isEmpty ? "Last name is required" : null;
-
-  String? get genderErrorText =>
-      gender != null && gender!.isEmpty ? "Select a gender" : null;
 
   WelcomeUserState({
     this.firstName,
     this.lastName,
     this.gender,
+    this.countryCode,
+    this.phoneNumber,
     this.formStatus = const FormInitialStatus(),
   });
 
@@ -26,11 +21,15 @@ class WelcomeUserState {
       {String? firstName,
       String? lastName,
       String? gender,
+      String? countryCode,
+      String? phoneNumber,
       FormSubmissionStatus? formStatus}) {
     return WelcomeUserState(
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       gender: gender ?? this.gender,
+      countryCode: countryCode ?? this.countryCode,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       formStatus: formStatus ?? this.formStatus,
     );
   }

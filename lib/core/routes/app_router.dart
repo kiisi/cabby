@@ -5,7 +5,7 @@ import 'package:cabby/app/di.dart';
 import 'app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
-class AppRouter extends $AppRouter {
+class AppRouter extends RootStackRouter {
   List<AutoRoute> guardedRoutes(List<AutoRoute> routes, AutoRouteGuard guard) {
     return routes.map((route) => route.copyWith(guards: [guard])).toList();
   }

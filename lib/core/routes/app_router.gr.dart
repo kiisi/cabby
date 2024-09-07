@@ -24,83 +24,6 @@ import 'package:cabby/features/passenger/payment/view/payment.dart' as _i8;
 import 'package:cabby/features/profile/view/profile.dart' as _i9;
 import 'package:flutter/material.dart' as _i12;
 
-abstract class $AppRouter extends _i11.RootStackRouter {
-  $AppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, _i11.PageFactory> pagesMap = {
-    AuthenticationRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i1.AuthenticationScreen(),
-      );
-    },
-    HomeRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i2.HomeScreen(),
-      );
-    },
-    LoadingIndicatorRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i3.LoadingIndicatorScreen(),
-      );
-    },
-    OnBoardingRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i4.OnBoardingScreen(),
-      );
-    },
-    OtpVerificationRoute.name: (routeData) {
-      final args = routeData.argsAs<OtpVerificationRouteArgs>(
-          orElse: () => const OtpVerificationRouteArgs());
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i5.OtpVerificationScreen(
-          key: args.key,
-          countryCode: args.countryCode,
-          phoneNumber: args.phoneNumber,
-          email: args.email,
-        ),
-      );
-    },
-    PassengerJourneyRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i6.PassengerJourneyScreen(),
-      );
-    },
-    PassengerLocationsRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i7.PassengerLocationsScreen(),
-      );
-    },
-    PaymentRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i8.PaymentScreen(),
-      );
-    },
-    ProfileRoute.name: (routeData) {
-      final args = routeData.argsAs<ProfileRouteArgs>(
-          orElse: () => const ProfileRouteArgs());
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i9.ProfileScreen(key: args.key),
-      );
-    },
-    WelcomeUserRoute.name: (routeData) {
-      return _i11.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i10.WelcomeUserScreen(),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [_i1.AuthenticationScreen]
 class AuthenticationRoute extends _i11.PageRouteInfo<void> {
@@ -112,7 +35,12 @@ class AuthenticationRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'AuthenticationRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i1.AuthenticationScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -126,7 +54,12 @@ class HomeRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i2.HomeScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -140,7 +73,12 @@ class LoadingIndicatorRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'LoadingIndicatorRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i3.LoadingIndicatorScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -154,7 +92,12 @@ class OnBoardingRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'OnBoardingRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i4.OnBoardingScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -180,8 +123,19 @@ class OtpVerificationRoute
 
   static const String name = 'OtpVerificationRoute';
 
-  static const _i11.PageInfo<OtpVerificationRouteArgs> page =
-      _i11.PageInfo<OtpVerificationRouteArgs>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<OtpVerificationRouteArgs>(
+          orElse: () => const OtpVerificationRouteArgs());
+      return _i5.OtpVerificationScreen(
+        key: args.key,
+        countryCode: args.countryCode,
+        phoneNumber: args.phoneNumber,
+        email: args.email,
+      );
+    },
+  );
 }
 
 class OtpVerificationRouteArgs {
@@ -217,7 +171,12 @@ class PassengerJourneyRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'PassengerJourneyRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i6.PassengerJourneyScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -231,7 +190,12 @@ class PassengerLocationsRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'PassengerLocationsRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i7.PassengerLocationsScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -245,7 +209,12 @@ class PaymentRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'PaymentRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i8.PaymentScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -262,8 +231,14 @@ class ProfileRoute extends _i11.PageRouteInfo<ProfileRouteArgs> {
 
   static const String name = 'ProfileRoute';
 
-  static const _i11.PageInfo<ProfileRouteArgs> page =
-      _i11.PageInfo<ProfileRouteArgs>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      final args =
+          data.argsAs<ProfileRouteArgs>(orElse: () => const ProfileRouteArgs());
+      return _i9.ProfileScreen(key: args.key);
+    },
+  );
 }
 
 class ProfileRouteArgs {
@@ -288,5 +263,10 @@ class WelcomeUserRoute extends _i11.PageRouteInfo<void> {
 
   static const String name = 'WelcomeUserRoute';
 
-  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i10.WelcomeUserScreen();
+    },
+  );
 }

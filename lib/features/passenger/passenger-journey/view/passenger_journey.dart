@@ -205,8 +205,9 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                                     state.destinationLocation?.shortAddress ??
                                         '',
                                     style: const TextStyle(
-                                        fontSize: 16,
-                                        overflow: TextOverflow.ellipsis),
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                               ),
