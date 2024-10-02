@@ -153,6 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: AppSize.s12,
                       ),
                       Button(
+                        borderRadius: AppSize.s100,
                         onPressed: () async {
                           if (state.pickupLocation?.address != null &&
                               state.destinationLocation?.address != null) {
@@ -185,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Material(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
         child: Container(
-          height: AppSize.s50,
+          height: AppSize.s46,
           width: double.infinity,
           decoration: BoxDecoration(
             color: ColorManager.whiteGrey,
@@ -246,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Material(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
         child: Container(
-          height: AppSize.s50,
+          height: AppSize.s46,
           width: double.infinity,
           decoration: BoxDecoration(
             color: ColorManager.whiteGrey,

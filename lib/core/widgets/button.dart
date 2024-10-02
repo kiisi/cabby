@@ -17,10 +17,10 @@ class Button extends ElevatedButton {
     EdgeInsetsGeometry? padding,
     Widget? child,
     this.loading = false,
-    this.borderRadius = AppSize.s10,
+    this.borderRadius = AppSize.s8,
   }) : super(
           style: ElevatedButton.styleFrom(
-            fixedSize: const Size.fromHeight(AppSize.s50),
+            fixedSize: const Size.fromHeight(AppSize.s48),
             disabledBackgroundColor: Colors.blue,
             disabledForegroundColor: ColorManager.white,
             shape: RoundedRectangleBorder(

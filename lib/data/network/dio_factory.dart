@@ -1,5 +1,4 @@
 import 'package:cabby/app/app_prefs.dart';
-import 'package:cabby/app/di.dart';
 import 'package:cabby/core/common/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -25,11 +24,18 @@ class DioFactory {
     Map<String, dynamic>? headers = {
       contentType: applicationJson,
       accept: applicationJson,
-      authorization: await _appPreferences.getAccessToken(),
+      // authorization: 'Bearer $accessToken',
       defaultLanguage: language
     };
 
-    // dio.interceptors.add(NetworkConnectivityInterceptor());
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        String accessToken = await _appPreferences.getAccessToken();
+        print('===> token: $accessToken');
+        options.headers['Authorization'] = 'Bearer $accessToken';
+        handler.next(options); // Continue with the request
+      },
+    ));
 
     dio.options = BaseOptions(
       baseUrl: Constant.baseUrl,
@@ -50,24 +56,5 @@ class DioFactory {
     }
 
     return dio;
-  }
-}
-
-class NetworkConnectivityInterceptor extends Interceptor {
-  @override
-  Future<void> onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
-    super.onRequest(options, handler);
-
-    if (await InternetConnectionChecker().hasConnection) {
-      handler.next(options);
-    } else {
-      throw DioException(
-        requestOptions: options,
-        type: DioExceptionType.connectionError,
-        error: "Error: No internet connection",
-        message: "No internet connection",
-      );
-    }
   }
 }

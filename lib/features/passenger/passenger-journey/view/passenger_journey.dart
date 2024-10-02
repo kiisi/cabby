@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cabby/core/common/marker.dart';
+import 'package:cabby/core/widgets/draggable_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cabby/app/app_prefs.dart';
@@ -31,6 +32,8 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
   GoogleMapController? controller;
 
   final GlobalKey key = GlobalKey();
+
+  bool isConfirmOrderVisible = true;
 
   BitmapDescriptor? customMarker;
 
@@ -223,9 +226,14 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                       ),
                     ),
                   ),
+                  isConfirmOrderVisible
+                      ? const SizedBox()
+                      : const DraggableBottomSheet()
                 ],
               ),
-              bottomSheet: _confirmationBottomSheet(state),
+              bottomSheet: isConfirmOrderVisible
+                  ? _confirmationBottomSheet(state)
+                  : null,
             );
           },
         );
@@ -331,7 +339,11 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                     height: AppSize.s10,
                   ),
                   Button(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        isConfirmOrderVisible = false;
+                      });
+                    },
                     borderRadius: AppSize.s100,
                     child: const Text(
                       'Confirm order',
