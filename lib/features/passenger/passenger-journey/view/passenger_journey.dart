@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cabby/core/common/marker.dart';
+import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/widgets/draggable_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
@@ -18,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:ui' as ui;
 
 @RoutePage()
@@ -28,7 +31,8 @@ class PassengerJourneyScreen extends StatefulWidget {
   State<PassengerJourneyScreen> createState() => _PassengerJourneyScreenState();
 }
 
-class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
+class _PassengerJourneyScreenState extends State<PassengerJourneyScreen>
+    with SingleTickerProviderStateMixin {
   GoogleMapController? controller;
 
   final GlobalKey key = GlobalKey();
@@ -101,6 +105,14 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
     return BlocConsumer<PassengerLocationsBloc, PassengerLocationsState>(
       listener: (context, state) {},
       builder: (context, state) {
+        NumberFormat formatter = NumberFormat("#,##0", "en_US");
+
+        // Formatting the amount
+        String estimatedFare = state.estimatedFareValue != null
+            ? formatter.format(state.estimatedFareValue)
+            : '';
+        String currency = state.estimatedFareCurrency ?? '';
+
         var startLocationLatitude =
             state.pickupLocation?.latitude ?? _appPreferences.getLatitude();
         var startLocationLongitude =
@@ -226,9 +238,8 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
                       ),
                     ),
                   ),
-                  isConfirmOrderVisible
-                      ? const SizedBox()
-                      : const DraggableBottomSheet()
+                  if (!isConfirmOrderVisible)
+                    _draggableBottomSheet(currency, estimatedFare),
                 ],
               ),
               bottomSheet: isConfirmOrderVisible
@@ -238,6 +249,39 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _divider() {
+    return Container(
+      color: const Color(0xFFE9EAEC),
+      child: Column(
+        children: [
+          Container(
+            height: 20,
+            decoration: BoxDecoration(
+              color: ColorManager.white,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            height: 20,
+            decoration: BoxDecoration(
+              color: ColorManager.white,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -392,6 +436,330 @@ class _PassengerJourneyScreenState extends State<PassengerJourneyScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _draggableBottomSheet(String currency, String estimatedFare) {
+    return DraggableBottomSheet(
+      slivers: [
+        SliverList.list(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16, left: 16, top: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Finding a driver',
+                    style: TextStyle(
+                      fontSize: AppSize.s24,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Oceanwide',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  const Text(
+                    'Searching for the closest driver for you',
+                    style: TextStyle(
+                        color: Color(0xFF686869),
+                        fontSize: AppSize.s14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+                    child: ColorfulLinearProgressIndicator(
+                      minHeight: 2.5,
+                      backgroundColor: Colors.blue[100],
+                      colors: [
+                        ColorManager.primary,
+                      ],
+                      duration: const Duration(milliseconds: 500),
+                      initialColor: ColorManager.primary,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              height: 55,
+                              width: 55,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF3F5F7),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icons/safety.svg',
+                                  height: 42,
+                                  width: 42,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Safety',
+                              style: TextStyle(
+                                fontSize: 12,
+                                letterSpacing: 0.1,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              height: 55,
+                              width: 55,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF3F5F7),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icons/cancel-ride.svg',
+                                  height: 42,
+                                  width: 42,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Cancel ride',
+                              style: TextStyle(
+                                fontSize: 12,
+                                letterSpacing: 0.1,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _divider(),
+            Padding(
+              padding: const EdgeInsets.only(right: 16, left: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Payment method',
+                    style: TextStyle(
+                      fontSize: AppSize.s20,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Oceanwide',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Fare',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Euclide',
+                          letterSpacing: 0.1,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF686869),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        height: 4,
+                        width: 4,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF686869),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      const Text(
+                        'Cabby',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Euclide',
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.1,
+                          color: Color(0xFF686869),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  BlocBuilder<PaymentBloc, PaymentState>(
+                    builder: (context, state) {
+                      return Material(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(4.0),
+                          onTap: () async {
+                            await context.router.pushNamed('/payment');
+                          },
+                          child: ListTile(
+                            tileColor: Colors.transparent,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 4.0, vertical: 0),
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.asset(
+                                state.paymentMethod == PaymentMethods.cash
+                                    ? 'assets/images/dollar.png'
+                                    : 'assets/images/cabby-cash.png',
+                                height: AppSize.s24,
+                                width: AppSize.s24,
+                              ),
+                            ),
+                            title: Text(
+                              state.paymentMethod == PaymentMethods.cash
+                                  ? PaymentMethods.cash
+                                  : PaymentMethods.cabbyCash,
+                              style: const TextStyle(
+                                color: Color(0xFF737479),
+                                fontFamily: 'Euclide',
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                            trailing: Text(
+                              '${currency.toUpperCase()} $estimatedFare',
+                              style: const TextStyle(
+                                fontFamily: 'Oceanwide',
+                                fontSize: 16.0,
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            _divider(),
+            Padding(
+              padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'More',
+                    style: TextStyle(
+                      fontSize: AppSize.s20,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Oceanwide',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(4.0),
+                      onTap: () async {},
+                      child: const ListTile(
+                        tileColor: Colors.transparent,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                        leading: Icon(
+                          Icons.ios_share_outlined,
+                          color: Color(0xFF686869),
+                        ),
+                        title: Text(
+                          'Share ride details',
+                          style: TextStyle(
+                            fontFamily: 'Euclide',
+                            color: Color(0xFF686869),
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Color(0xFF686869),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(4.0),
+                      onTap: () async {},
+                      child: const ListTile(
+                        tileColor: Colors.transparent,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                        leading: Icon(
+                          Icons.call_outlined,
+                          color: Color(0xFF686869),
+                        ),
+                        title: Text(
+                          'Contact driver',
+                          style: TextStyle(
+                            fontFamily: 'Euclide',
+                            color: Color(0xFF686869),
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Color(0xFF686869),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Material(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(4.0),
+                      onTap: () async {},
+                      child: const ListTile(
+                        tileColor: Colors.transparent,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+                        leading: Icon(
+                          Icons.block_outlined,
+                          color: Color(0xFF686869),
+                        ),
+                        title: Text(
+                          'Cancel ride',
+                          style: TextStyle(
+                            fontFamily: 'Euclide',
+                            color: Color(0xFF686869),
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: Color(0xFF686869),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

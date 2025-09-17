@@ -34,7 +34,8 @@ class Button extends ElevatedButton {
                   height: 24,
                   width: 24,
                   child: CircularProgressIndicator(
-                    color: ColorManager.whiteSmoke,
+                    strokeWidth: 2,
+                    color: ColorManager.white,
                   ),
                 )
               : child,

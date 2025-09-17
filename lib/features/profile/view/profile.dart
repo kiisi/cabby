@@ -180,12 +180,12 @@ class LogoutConfirmationDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: ColorManager.primary,
+            backgroundColor: const Color(0xFFFF5266),
             foregroundColor: ColorManager.white,
           ),
           onPressed: () async {
             Navigator.of(context).pop(true);
-            await _appPreferences.logout().then((_) {
+            _appPreferences.logout().then((_) {
               context.router.replaceAll([const AuthenticationRoute()]);
             });
           },
@@ -214,7 +214,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: ColorManager.primary,
+            backgroundColor: const Color(0xFFFF5266),
             foregroundColor: ColorManager.white,
           ),
           onPressed: () {

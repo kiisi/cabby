@@ -112,9 +112,9 @@ class _PassengerLocationsScreenState extends State<PassengerLocationsScreen> {
               state.locationDetailsLoadingStatus == LoadingStatus.loading
                   ? ColorfulLinearProgressIndicator(
                       minHeight: 2,
+                      backgroundColor: Colors.blue[100],
                       colors: [
                         ColorManager.primary,
-                        const Color(0xFFFD92B6),
                       ],
                       duration: const Duration(milliseconds: 500),
                       initialColor: ColorManager.primary,

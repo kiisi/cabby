@@ -15,7 +15,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: '/loading-indicator',
           page: LoadingIndicatorRoute.page,
-          initial: true,
+          // initial: true,
         ),
         AutoRoute(
           path: '/onboarding',
@@ -26,11 +26,11 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: '/otp-verification', page: OtpVerificationRoute.page),
         AutoRoute(path: '/welcome-user', page: WelcomeUserRoute.page),
         AutoRoute(path: '/home', page: HomeRoute.page),
-        AutoRoute(
-            path: '/passenger-locations', page: PassengerLocationsRoute.page),
+        AutoRoute(path: '/passenger-locations', page: PassengerLocationsRoute.page),
         AutoRoute(path: '/passenger-journey', page: PassengerJourneyRoute.page),
         AutoRoute(path: '/payment', page: PaymentRoute.page),
         AutoRoute(path: '/profile', page: ProfileRoute.page),
+        AutoRoute(path: '/homes', page: HomesRoute.page, initial: true),
       ];
 }
 
@@ -38,10 +38,8 @@ class OnBoardingGuard extends AutoRouteGuard {
   final AppPreferences _appPreferences = getIt<AppPreferences>();
 
   @override
-  Future<void> onNavigation(
-      NavigationResolver resolver, StackRouter router) async {
-    bool isOnBoardingScreenViewed =
-        await _appPreferences.isOnBoardingScreenViewed();
+  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+    bool isOnBoardingScreenViewed = await _appPreferences.isOnBoardingScreenViewed();
 
     if (isOnBoardingScreenViewed) {
       router.push(const AuthenticationRoute());

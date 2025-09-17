@@ -14,7 +14,7 @@ class _AppServiceClient implements AppServiceClient {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'http://192.168.0.182:5000/api/v1';
+    baseUrl ??= 'http://192.168.43.217:5000/api/v1';
   }
 
   final Dio _dio;

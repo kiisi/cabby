@@ -2,7 +2,6 @@ import 'package:cabby/app/app_prefs.dart';
 import 'package:cabby/core/common/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 const String applicationJson = "application/json";

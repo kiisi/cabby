@@ -6,9 +6,12 @@ import 'package:cabby/core/common/constants.dart';
 import 'package:cabby/core/resources/theme_manager.dart';
 import 'package:cabby/core/routes/app_router.dart';
 import 'package:cabby/core/services/location_service.dart';
+import 'package:cabby/data/network/socket.dart';
 import 'package:cabby/features/auth/authentication/bloc/authentication_bloc.dart';
 import 'package:cabby/features/auth/otp-verification/bloc/otp_verification_bloc.dart';
 import 'package:cabby/features/auth/welcome-user/bloc/welcome_user_bloc.dart';
+import 'package:cabby/features/bloc/location/location_bloc.dart';
+import 'package:cabby/features/bloc/ride/ride_bloc.dart';
 import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:cabby/features/passenger/passenger-locations/bloc/passenger_locations_bloc.dart';
 import 'package:cabby/features/passenger/payment/bloc/payment_bloc.dart';
@@ -19,6 +22,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -29,8 +33,7 @@ void main() async {
   // Stripe
   Stripe.publishableKey = Constant.stripePublishableKey;
 
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
     initializeMapRenderer();
@@ -43,8 +46,7 @@ void main() async {
       statusBarBrightness: Brightness.light,
     ),
   );
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await initAppModule();
 
   runApp(const MyApp());
@@ -61,19 +63,16 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
     return _initializedRendererCompleter!.future;
   }
 
-  final Completer<AndroidMapRenderer?> completer =
-      Completer<AndroidMapRenderer?>();
+  final Completer<AndroidMapRenderer?> completer = Completer<AndroidMapRenderer?>();
   _initializedRendererCompleter = completer;
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     unawaited(mapsImplementation
         .initializeWithRenderer(AndroidMapRenderer.latest)
-        .then((AndroidMapRenderer initializedRenderer) =>
-            completer.complete(initializedRenderer)));
+        .then((AndroidMapRenderer initializedRenderer) => completer.complete(initializedRenderer)));
   } else {
     completer.complete(null);
   }
@@ -95,8 +94,7 @@ class _MyAppState extends State<MyApp> {
 
   final LocationServiceBloc _locationServiceBloc = getIt<LocationServiceBloc>();
 
-  final PassengerLocationsBloc _passengerLocationsBloc =
-      getIt<PassengerLocationsBloc>();
+  final PassengerLocationsBloc _passengerLocationsBloc = getIt<PassengerLocationsBloc>();
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
 
@@ -121,19 +119,21 @@ class _MyAppState extends State<MyApp> {
     );
 
     final positionStream = _geolocatorPlatform.getPositionStream(
-      locationSettings:
-          const LocationSettings(accuracy: LocationAccuracy.bestForNavigation),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.bestForNavigation),
     );
     positionStream.handleError((error) {
-      // print("=============GEOLOCATOR ERROR=======");
       _locationServiceBloc.add(LocationServiceDisabled());
     }).listen((position) {
-      // print("========GEOLOCATOR SUCCESS==========");
       _locationServiceBloc.add(LocationServiceEnabled(
         latitude: position.latitude,
         longitude: position.longitude,
       ));
     });
+
+    // SOCKET
+    SocketServiceClient socketServiceClient = SocketServiceClient();
+
+    socketServiceClient.connect();
   }
 
   @override
@@ -163,6 +163,12 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider<WelcomeUserBloc>(
           create: (BuildContext context) => getIt<WelcomeUserBloc>(),
+        ),
+        BlocProvider<RideBloc>(
+          create: (BuildContext context) => getIt<RideBloc>(),
+        ),
+        BlocProvider<LocationBloc>(
+          create: (BuildContext context) => getIt<LocationBloc>(),
         ),
       ],
       child: MaterialApp.router(
