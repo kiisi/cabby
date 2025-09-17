@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cabby/app/di.dart';
 import 'package:cabby/core/common/custom_flushbar.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
@@ -8,7 +7,6 @@ import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/core/routes/app_router.gr.dart';
 import 'package:cabby/core/widgets/button.dart';
 import 'package:cabby/features/auth/authentication/bloc/authentication_bloc.dart';
-import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,71 +19,41 @@ class AuthenticationScreen extends StatefulWidget {
 }
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
-  CountryCode? selectedCountry = CountryCode.fromCode('NG');
-
   final _formKey = GlobalKey<FormState>();
-
-  final countryPicker = FlCountryCodePicker(
-    filteredCountries: ["AE", "SD", "AU", "KE", "NG"],
-    showDialCode: true,
-    showSearchBar: false,
-    dialCodeTextStyle: TextStyle(color: ColorManager.whiteSmoke),
-    countryTextStyle: TextStyle(color: ColorManager.whiteSmoke),
-    title: Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
-      child: Center(
-        child: Text(
-          AppStrings.selectYourCountry,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: AppSize.s24,
-            color: ColorManager.white,
-          ),
-        ),
-      ),
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<AuthenticationBloc>(),
-      child: Scaffold(
-        backgroundColor: ColorManager.black,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: AppPadding.p15,
-                right: AppPadding.p15,
-                bottom: AppPadding.p20,
-                top: AppSize.s160,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        _title(),
-                        _subtitle(),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: AppSize.s40,
-                    ),
-                    _phoneNumberInput(),
-                    const SizedBox(
-                      height: AppSize.s20,
-                    ),
-                    _emailInput(),
-                    const SizedBox(
-                      height: AppSize.s20,
-                    ),
-                    _processButton(),
-                  ],
-                ),
+    return Scaffold(
+      backgroundColor: ColorManager.black,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: AppPadding.p15,
+              right: AppPadding.p15,
+              bottom: AppPadding.p20,
+              top: AppSize.s160,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      _title(),
+                      _subtitle(),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: AppSize.s30,
+                  ),
+                  _emailInput(),
+                  const SizedBox(
+                    height: AppSize.s20,
+                  ),
+                  _processButton(),
+                ],
               ),
             ),
           ),
@@ -112,94 +80,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         color: ColorManager.whiteSmoke,
         fontSize: AppSize.s15,
       ),
-    );
-  }
-
-  Widget _phoneNumberInput() {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-      builder: (context, state) {
-        return TextFormField(
-          autofocus: true,
-          keyboardType: TextInputType.number,
-          onChanged: (value) {
-            context
-                .read<AuthenticationBloc>()
-                .add(AuthenticationSetPhoneNumber(phoneNumber: value));
-          },
-          decoration: InputDecoration(
-            errorText: state.phoneNumberErrorText,
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: AppSize.s12),
-              child: IntrinsicWidth(
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        final code = await countryPicker.showPicker(
-                          pickerMaxHeight: 300,
-                          backgroundColor: ColorManager.blueLight,
-                          context: context,
-                        );
-                        // Null check
-                        if (code != null) {
-                          setState(() {
-                            selectedCountry = code;
-                            context.read<AuthenticationBloc>().add(
-                                AuthenticationSetCountryCode(
-                                    countryCode: code.dialCode));
-                          });
-                        }
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(AppSize.s5),
-                        child: Image.asset(
-                          selectedCountry!.flagUri,
-                          fit: BoxFit.cover,
-                          width: AppSize.s30,
-                          height: AppSize.s24,
-                          alignment: Alignment.center,
-                          package: selectedCountry!.flagImagePackage,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: AppSize.s5,
-                    ),
-                    Text(
-                      selectedCountry!.dialCode,
-                      style: TextStyle(
-                        color: ColorManager.blueDark,
-                        fontSize: AppSize.s16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: AppSize.s10,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            fillColor: ColorManager.blackDark,
-            filled: true,
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.error),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.error),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-                vertical: AppSize.s11_3, horizontal: AppSize.s12),
-          ),
-          cursorColor: ColorManager.white,
-          style: TextStyle(
-            color: ColorManager.white,
-            fontSize: AppSize.s16,
-          ),
-        );
-      },
     );
   }
 
@@ -253,9 +133,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         .add(AuthenticationSubmission());
                   },
             child: const Text(
-              AppStrings.process,
+              AppStrings.submit,
               style:
-                  TextStyle(fontSize: AppSize.s18, fontWeight: FontWeight.w600),
+                  TextStyle(fontSize: AppSize.s16, fontWeight: FontWeight.w600),
             ),
           ),
         );
@@ -263,8 +143,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       listener: (context, state) {
         if (state.formStatus is FormSubmissionSuccess) {
           context.router.push(OtpVerificationRoute(
-            phoneNumber: state.phoneNumber,
-            countryCode: state.countryCode,
             email: state.email,
           ));
         } else if (state.formStatus is FormSubmissionFailed) {

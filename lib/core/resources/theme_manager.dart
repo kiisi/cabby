@@ -31,7 +31,6 @@ ThemeData getApplicationTheme() {
     buttonTheme: ButtonThemeData(
       disabledColor: ColorManager.primaryOpacity70,
       buttonColor: ColorManager.primary,
-      // splashColor: ColorManager.primaryOpacity70,
     ),
   );
 }

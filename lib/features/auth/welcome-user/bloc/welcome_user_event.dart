@@ -18,4 +18,14 @@ class WelcomeUserSetGender extends WelcomeUserEvent {
   WelcomeUserSetGender({this.gender});
 }
 
+class WelcomeUserSetCountryCode extends WelcomeUserEvent {
+  final String? countryCode;
+  WelcomeUserSetCountryCode({this.countryCode});
+}
+
+class WelcomeUserSetPhoneNumber extends WelcomeUserEvent {
+  final String? phoneNumber;
+  WelcomeUserSetPhoneNumber({this.phoneNumber});
+}
+
 class WelcomeUserSubmission extends WelcomeUserEvent {}

@@ -22,8 +22,6 @@ class AuthenticationRemoteDataSourceImpl
   Future<AuthenticationResponse> getStarted(
       GetStartedRequest getStartedRequest) async {
     return await _appServiceClient.getStarted(
-      countryCode: getStartedRequest.countryCode,
-      phoneNumber: getStartedRequest.phoneNumber,
       email: getStartedRequest.email,
     );
   }
@@ -45,6 +43,8 @@ class AuthenticationRemoteDataSourceImpl
       lastName: getStartedUserInfoRequest.lastName,
       gender: getStartedUserInfoRequest.gender,
       email: getStartedUserInfoRequest.email,
+      countryCode: getStartedUserInfoRequest.countryCode,
+      phoneNumber: getStartedUserInfoRequest.phoneNumber,
     );
   }
 

@@ -9,7 +9,6 @@ import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/core/routes/app_router.gr.dart';
 import 'package:cabby/core/widgets/button.dart';
 import 'package:cabby/data/responses/responses.dart';
-import 'package:cabby/domain/usecases/auth_usecase.dart';
 import 'package:cabby/features/auth/otp-verification/bloc/otp_verification_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,63 +44,60 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OtpVerificationBloc(getIt<OtpVerifyUseCase>()),
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: ColorManager.black,
+      appBar: AppBar(
         backgroundColor: ColorManager.black,
-        appBar: AppBar(
-          backgroundColor: ColorManager.black,
-          leading: IconButton(
-            onPressed: () {
-              context.router.maybePop();
-            },
-            icon: Icon(Icons.arrow_back, color: ColorManager.white),
-          ),
+        leading: IconButton(
+          onPressed: () {
+            context.router.maybePop();
+          },
+          icon: Icon(Icons.arrow_back, color: ColorManager.white),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(
-            right: AppSize.s15,
-            left: AppSize.s15,
-            top: AppSize.s50,
-            bottom: AppSize.s20,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _title(),
-                  const SizedBox(
-                    height: AppSize.s10,
-                  ),
-                  _subTitle(),
-                  const SizedBox(
-                    height: AppSize.s40,
-                  ),
-                  _otpInputField(),
-                  const SizedBox(
-                    height: AppSize.s20,
-                  ),
-                  // RichText(
-                  //   text: TextSpan(
-                  //     style: TextStyle(
-                  //         color: ColorManager.whiteSmoke,
-                  //         fontSize: AppSize.s16),
-                  //     children: [
-                  //       const TextSpan(text: "Didn't recieve code? "),
-                  //       TextSpan(
-                  //         text: "Resend Code",
-                  //         style: TextStyle(color: ColorManager.blue),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                ],
-              ),
-              _processButton(),
-            ],
-          ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(
+          right: AppSize.s15,
+          left: AppSize.s15,
+          top: AppSize.s50,
+          bottom: AppSize.s20,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _title(),
+                const SizedBox(
+                  height: AppSize.s10,
+                ),
+                _subTitle(),
+                const SizedBox(
+                  height: AppSize.s40,
+                ),
+                _otpInputField(),
+                const SizedBox(
+                  height: AppSize.s20,
+                ),
+                // RichText(
+                //   text: TextSpan(
+                //     style: TextStyle(
+                //         color: ColorManager.whiteSmoke,
+                //         fontSize: AppSize.s16),
+                //     children: [
+                //       const TextSpan(text: "Didn't recieve code? "),
+                //       TextSpan(
+                //         text: "Resend Code",
+                //         style: TextStyle(color: ColorManager.blue),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+            _processButton(),
+          ],
         ),
       ),
     );
@@ -188,7 +184,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           if (successData.data?.user?.isProfileComplete == true) {
             context.router.replaceAll([const HomeRoute()]);
           } else {
-            context.router.replaceAll([WelcomeUserRoute()]);
+            context.router.replaceAll([const WelcomeUserRoute()]);
           }
         } else if (state.formStatus is FormSubmissionFailed) {
           FormSubmissionFailed errorData =

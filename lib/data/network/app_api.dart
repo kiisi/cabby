@@ -1,6 +1,7 @@
 import 'package:cabby/core/common/constants.dart';
 import 'package:cabby/data/responses/responses.dart';
 import 'package:dio/dio.dart' hide Headers;
+import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 
 part 'app_api.g.dart';
@@ -11,8 +12,6 @@ abstract class AppServiceClient {
 
   @POST('/auth/get-started')
   Future<AuthenticationResponse> getStarted({
-    @Field("countryCode") required String countryCode,
-    @Field("phoneNumber") required String phoneNumber,
     @Field("email") required String email,
   });
 
@@ -28,6 +27,8 @@ abstract class AppServiceClient {
     @Field("firstName") required String firstName,
     @Field("lastName") required String lastName,
     @Field("gender") required String gender,
+    @Field("countryCode") required String countryCode,
+    @Field("phoneNumber") required String phoneNumber,
   });
 
   @GET('/auth/user-auth')

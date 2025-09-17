@@ -34,11 +34,11 @@ class AppDrawer extends StatelessWidget {
               onTap: () {},
               title: 'Ride History',
             ),
-            DrawerItem(
-              icon: Icons.local_offer_outlined,
-              onTap: () {},
-              title: 'Offer and Coupens',
-            ),
+            // DrawerItem(
+            //   icon: Icons.local_offer_outlined,
+            //   onTap: () {},
+            //   title: 'Offer and Coupens',
+            // ),
             DrawerItem(
               icon: Icons.info_outline_rounded,
               onTap: () {},

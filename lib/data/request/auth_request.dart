@@ -1,12 +1,8 @@
 class GetStartedRequest {
-  final String phoneNumber;
   final String email;
-  final String countryCode;
 
   GetStartedRequest({
-    required this.phoneNumber,
     required this.email,
-    required this.countryCode,
   });
 }
 
@@ -25,12 +21,16 @@ class GetStartedUserInfoRequest {
   final String lastName;
   final String gender;
   final String email;
+  final String countryCode;
+  final String phoneNumber;
 
   GetStartedUserInfoRequest({
     required this.email,
     required this.firstName,
     required this.lastName,
     required this.gender,
+    required this.countryCode,
+    required this.phoneNumber,
   });
 }
 

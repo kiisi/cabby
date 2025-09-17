@@ -1,12 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cabby/app/di.dart';
 import 'package:cabby/core/common/custom_flushbar.dart';
 import 'package:cabby/core/common/form_submission_status.dart';
 import 'package:cabby/core/resources/color_manager.dart';
 import 'package:cabby/core/resources/strings_manager.dart';
 import 'package:cabby/core/resources/values_manager.dart';
 import 'package:cabby/core/widgets/button.dart';
-import 'package:cabby/domain/usecases/auth_usecase.dart';
+import 'package:cabby/core/widgets/country_code_phone_number_input.dart';
 import 'package:cabby/features/auth/welcome-user/bloc/welcome_user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,47 +23,48 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => WelcomeUserBloc(getIt<GetStartedUserInfoUseCase>()),
-      child: Scaffold(
-        backgroundColor: ColorManager.black,
-        body: SafeArea(
-            child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: AppSize.s15,
-              left: AppSize.s15,
-              top: AppSize.s100,
-              bottom: AppSize.s20,
-            ),
-            child: Column(
-              children: [
-                _title(),
-                const SizedBox(
-                  height: AppSize.s10,
-                ),
-                _subTitle(),
-                const SizedBox(
-                  height: AppSize.s40,
-                ),
-                _firstNameInputField(),
-                const SizedBox(
-                  height: AppSize.s20,
-                ),
-                _lastNameInputField(),
-                const SizedBox(
-                  height: AppSize.s20,
-                ),
-                _genderDropdownMenu(),
-                const SizedBox(
-                  height: AppSize.s40,
-                ),
-                _processButton(),
-              ],
-            ),
+    return Scaffold(
+      backgroundColor: ColorManager.black,
+      body: SafeArea(
+          child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            right: AppSize.s15,
+            left: AppSize.s15,
+            top: AppSize.s100,
+            bottom: AppSize.s20,
           ),
-        )),
-      ),
+          child: Column(
+            children: [
+              _title(),
+              const SizedBox(
+                height: AppSize.s10,
+              ),
+              _subTitle(),
+              const SizedBox(
+                height: AppSize.s40,
+              ),
+              _firstNameInputField(),
+              const SizedBox(
+                height: AppSize.s20,
+              ),
+              _lastNameInputField(),
+              const SizedBox(
+                height: AppSize.s20,
+              ),
+              _countryCodePhoneNumberInput(),
+              const SizedBox(
+                height: AppSize.s20,
+              ),
+              _genderDropdownMenu(),
+              const SizedBox(
+                height: AppSize.s30,
+              ),
+              _processButton(),
+            ],
+          ),
+        ),
+      )),
     );
   }
 
@@ -105,10 +105,6 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
             fillColor: ColorManager.blackDark,
             hintStyle: TextStyle(
                 color: ColorManager.whiteSmoke, fontWeight: FontWeight.w300),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.blueDark),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: ColorManager.blueDark),
               borderRadius: BorderRadius.circular(AppSize.s10),
@@ -143,10 +139,6 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
             fillColor: ColorManager.blackDark,
             hintStyle: TextStyle(
                 color: ColorManager.whiteSmoke, fontWeight: FontWeight.w300),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManager.blueDark),
-              borderRadius: BorderRadius.circular(AppSize.s10),
-            ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: ColorManager.blueDark),
               borderRadius: BorderRadius.circular(AppSize.s10),
@@ -167,6 +159,25 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
     );
   }
 
+  Widget _countryCodePhoneNumberInput() {
+    return BlocBuilder<WelcomeUserBloc, WelcomeUserState>(
+      builder: (context, state) {
+        return CountryCodePhoneNumberInput(
+          onCountryCodeSelected: (value) {
+            context
+                .read<WelcomeUserBloc>()
+                .add(WelcomeUserSetCountryCode(countryCode: value.dialCode));
+          },
+          onPhoneNumberChanged: (value) {
+            context
+                .read<WelcomeUserBloc>()
+                .add(WelcomeUserSetPhoneNumber(phoneNumber: value));
+          },
+        );
+      },
+    );
+  }
+
   Widget _genderDropdownMenu() {
     return BlocBuilder<WelcomeUserBloc, WelcomeUserState>(
       builder: (context, state) {
@@ -174,16 +185,18 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
           width: double.infinity,
           height: AppSize.s50,
           child: DropdownMenu<String>(
+            enableSearch: false,
+            requestFocusOnTap: true,
             textStyle: TextStyle(color: ColorManager.white),
             expandedInsets: const EdgeInsets.all(0),
             menuStyle: MenuStyle(
-              shape: MaterialStatePropertyAll(
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              backgroundColor: MaterialStatePropertyAll(ColorManager.blackDark),
-              elevation: const MaterialStatePropertyAll(AppSize.s0),
+              backgroundColor: WidgetStatePropertyAll(ColorManager.blackDark),
+              elevation: const WidgetStatePropertyAll(AppSize.s0),
             ),
             inputDecorationTheme: InputDecorationTheme(
               suffixIconColor: ColorManager.white,
@@ -191,10 +204,6 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
                   color: ColorManager.whiteSmoke, fontWeight: FontWeight.w300),
               fillColor: ColorManager.blackDark,
               filled: true,
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: ColorManager.blueDark),
-                borderRadius: BorderRadius.circular(AppSize.s10),
-              ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: ColorManager.blueDark),
                 borderRadius: BorderRadius.circular(AppSize.s10),
@@ -213,7 +222,7 @@ class _WelcomeUserScreenState extends State<WelcomeUserScreen> {
                 list.map<DropdownMenuEntry<String>>((String value) {
               return DropdownMenuEntry<String>(
                   style: ButtonStyle(
-                    foregroundColor: MaterialStatePropertyAll(
+                    foregroundColor: WidgetStatePropertyAll(
                       ColorManager.whiteSmoke,
                     ),
                   ),

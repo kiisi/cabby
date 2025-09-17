@@ -30,20 +30,22 @@ class _LoadingIndicatorScreenState extends State<LoadingIndicatorScreen> {
   }
 
   void _bind(BuildContext context) async {
-    bool isOnBoardingScreenViewed =
-        await _appPreferences.isOnBoardingScreenViewed();
+    bool isOnBoardingScreenViewed = await _appPreferences.isOnBoardingScreenViewed();
 
     if (isOnBoardingScreenViewed) {
       (await _userAuthUseCase.execute(null)).fold(
         (failure) {
-          print("====Failure Error =====");
-          print("Failure ${failure.statusCode}");
-          print("Failure Message ${failure.message}");
           context.router.replaceAll([const AuthenticationRoute()]);
         },
         (success) => {
-          print('Success $success'),
-          context.router.replaceAll([const HomeRoute()])
+          if (success.data?.user?.isProfileComplete == true)
+            {
+              context.router.replaceAll([const HomesRoute()])
+            }
+          else
+            {
+              context.router.replaceAll([const WelcomeUserRoute()])
+            }
         },
       );
     } else {

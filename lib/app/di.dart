@@ -1,11 +1,19 @@
 import 'package:cabby/app/app_prefs.dart';
+import 'package:cabby/core/utils/location_service.dart';
 import 'package:cabby/data/data_source/google_maps_remote_data_source.dart';
 import 'package:cabby/data/data_source/passenger_remote_data_source.dart';
 import 'package:cabby/data/network/app_api.dart';
 import 'package:cabby/data/network/dio_factory.dart';
+import 'package:cabby/data/providers/api_provider.dart';
+import 'package:cabby/data/providers/socket_provider.dart';
 import 'package:cabby/data/repository/google_maps_repository.dart';
 import 'package:cabby/data/repository/passenger_repository.dart';
+import 'package:cabby/data/repository/rating_repository.dart';
+import 'package:cabby/data/repository/ride_repository.dart';
+import 'package:cabby/data/repository/user_repository.dart';
 import 'package:cabby/features/auth/auth.di.dart';
+import 'package:cabby/features/bloc/location/location_bloc.dart';
+import 'package:cabby/features/bloc/ride/ride_bloc.dart';
 import 'package:cabby/features/passenger/location-appbar.dart/bloc/location_service_bloc.dart';
 import 'package:cabby/features/passenger/passenger-locations/passenger.di.dart';
 import 'package:cabby/features/passenger/payment/payment.di.dart';
@@ -30,25 +38,24 @@ Future<void> initAppModule() async {
   final dio = await getIt<DioFactory>().getDio();
   getIt.registerLazySingleton<AppServiceClient>(() => AppServiceClient(dio));
 
+  getIt.registerLazySingleton<ApiProvider>(() => ApiProvider(getIt()));
+
+  getIt.registerLazySingleton<SocketProvider>(() => SocketProvider(getIt()));
+
   getIt.registerLazySingleton<LocationServiceBloc>(() => LocationServiceBloc());
 
-  getIt.registerLazySingleton<GoogleMapsServiceClient>(
-      () => GoogleMapsServiceClient(dio));
+  getIt.registerLazySingleton<GoogleMapsServiceClient>(() => GoogleMapsServiceClient(dio));
 
-  getIt.registerLazySingleton<GoogleMapsRouteServiceClient>(
-      () => GoogleMapsRouteServiceClient(dio));
+  getIt.registerLazySingleton<GoogleMapsRouteServiceClient>(() => GoogleMapsRouteServiceClient(dio));
 
   getIt.registerLazySingleton<GoogleMapsRemoteDataSource>(
       () => GoogleMapsRemoteDataSourceImpl(getIt(), getIt()));
 
-  getIt.registerLazySingleton<PassengerRemoteDataSource>(
-      () => PassengerRemoteDataSourceImpl(getIt()));
+  getIt.registerLazySingleton<PassengerRemoteDataSource>(() => PassengerRemoteDataSourceImpl(getIt()));
 
-  getIt.registerLazySingleton<GoogleMapsRepository>(
-      () => GoogleMapsRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<GoogleMapsRepository>(() => GoogleMapsRepositoryImpl(getIt()));
 
-  getIt.registerLazySingleton<PassengerRepository>(
-      () => PassengerRepositoryImpl(getIt()));
+  getIt.registerLazySingleton<PassengerRepository>(() => PassengerRepositoryImpl(getIt()));
 
   // auth dependency injection
   authDependencyInjection();
@@ -58,4 +65,18 @@ Future<void> initAppModule() async {
 
   // payment dependency injection
   paymentDependencyInjection();
+
+  //
+  getIt.registerLazySingleton<LocationService>(() => LocationService());
+
+  getIt.registerLazySingleton<LocationBloc>(() => LocationBloc(locationService: getIt()));
+
+  getIt.registerLazySingleton<RideBloc>(() => RideBloc(rideRepository: getIt()));
+
+  getIt.registerLazySingleton<RatingRepository>(() => RatingRepository(getIt()));
+
+  getIt.registerLazySingleton<UserRepository>(() => UserRepository(apiProvider: getIt()));
+
+  getIt.registerLazySingleton<RideRepository>(
+      () => RideRepository(apiProvider: getIt(), socketProvider: getIt()));
 }
